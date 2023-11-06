@@ -1,7 +1,73 @@
 ﻿@{
     ViewData["Title"] = "Profile";
 }
+<head>
+    <link rel="stylesheet" href="~/css/profile.css">
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+<div class="page">
+    <section class="personalia">
+        <div class="personalia__picture">
+            <img src="~/images/Geert-Jan.jpg"/>
+            <h1>Geert-Jan Verkuil</h1>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Je profiel a sbe3</h1>
+        <div class="personalia__items">
+            <h2>Persoonlijke gegevens</h2>
+            <ul>
+                <li>Geboortedatum: 14-04-2003</li>
+                <li>Adres: Talmastraat 34, 3864DE</li>
+                <li>E-mail: geertjanverkuil@gmail.com</li>
+                <li>Mobiel: +31 6 45289517</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="profile">
+        <section class="profile-items">
+            <h4>Opleidingen</h4>
+            <ul>
+                <li class="profile-items__item">
+                    <h6>HAVO Economie & Maatschappij</h6>
+                    <p>
+                        Organisatie: Van Lodenstein College<br>
+                        Begindatum: September 2014<br>
+                        Einddatum: Juni 2019<br>
+                        Afgerond: Ja
+                    </p>
+                </li>
+                <li class="profile-items__item">
+                    <h6>Business IT & Management</h6>
+                    <p>
+                        Organisatie: Hogeschool Windesheim<br>
+                        Begindatum: September 2019<br>
+                        Einddatum: Juni 2024<br>
+                        Afgerond: Nee
+                    </p>
+                </li>
+            </ul>
+
+            <h3>Werkervaring</h3>
+            <ul>
+                <li class="profile-items__item">
+                    <h6>Developer</h6>
+                    <p>
+                        Bedrijf: Embite <br>
+                        Startdatum: 1-9-2019<br>
+                        Eindatum: Huidig
+                    </p>
+                </li>
+                <li class="profile-items__item">
+                    <h6>Algemeen Magazijnmedewerker</h6>
+                    <p>
+                        Bedrijf: Ebo van den Bor B.V.<br>
+                        Startdatum: 1-9-2019<br>
+                        Eindatum: 1-1-2020
+                    </p>
+                </li>
+            </ul>
+        </section>
+    </section>
 </div>
+</body>
