@@ -1,9 +1,44 @@
-﻿.personalia__picture {
+﻿/* In this file you can find the styling of the object on the profile page.*/
+.personalia__picture {
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* Stijlen voor mobiele apparaten (maximale scherm breedte bijv. 767px) */
+.personalia {
+    padding-top: 10px;
+    padding-bottom: 10px;
     width: 100%;
-    height: 100%;
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+    background-color: lightseagreen; /* Achtergrondkleur voor de hele lengte van de pagina */
+}
+
+.profile {
+    margin-top: 25px;
+    width: 100%;
+}
+
+/* Stijlen voor desktopschermen (minimale scherm breedte bijv. 768px) */
+@media (min-width: 768px) {
+
+    .personalia__picture {
+        margin-top: 25px;
+    }
+
+    .page {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .personalia {
+        width: 30%;
+        background-color: lightseagreen; /* Achtergrondkleur voor de hele lengte van de pagina */
+        height: 100vh
+    }
+
+    .profile {
+        width: 70%;
+        margin-left: 50px;
+        margin-top: 25px;
+    }
 }
