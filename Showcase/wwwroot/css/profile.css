@@ -2,14 +2,15 @@
 .personalia__picture {
     text-align: center;
     margin-top: 25px;
+    padding-bottom: 15px;
 }
 
-/* Stijlen voor mobiele apparaten (maximale scherm breedte bijv. 767px) */
 .personalia {
+    padding-left:10px;
     padding-top: 10px;
     padding-bottom: 10px;
     width: 100%;
-    background-color: lightseagreen; /* Achtergrondkleur voor de hele lengte van de pagina */
+    background-color: lightseagreen;
 }
 
 .profile {
@@ -17,12 +18,8 @@
     width: 100%;
 }
 
-/* Stijlen voor desktopschermen (minimale scherm breedte bijv. 768px) */
+/* Styling for desktop. 768px) */
 @media (min-width: 768px) {
-
-    .personalia__picture {
-        margin-top: 25px;
-    }
 
     .page {
         height: 100%;
@@ -32,8 +29,12 @@
 
     .personalia {
         width: 30%;
-        background-color: lightseagreen; /* Achtergrondkleur voor de hele lengte van de pagina */
+        background-color: lightseagreen;
         height: 100vh
+    }
+
+    .personalia__picture {
+        margin-top: 25px;
     }
 
     .profile {
