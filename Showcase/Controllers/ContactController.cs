@@ -13,5 +13,11 @@ namespace Showcase.Controllers
         {
             return View();
         }
+
+        public IActionResult ContactForm(string name)
+        {
+            ViewBag.ContactPerson = name;
+            return View();
+        }
     }
 }
