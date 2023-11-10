@@ -2,34 +2,57 @@
     ViewData["Title"] = "Contact";
     var contactName = ViewBag.ContactPerson;
 }
+@model MailRequest;
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Options;
+@inject IOptions<GoogleCaptchaConfig> GoogleCaptchaConfig
+
 <head>
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/contact.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaConfig.Value.SiteKey"></script>
+    <script>
+        $(function () {
+            grecaptcha.ready(function () {
+                grecaptcha.execute('@GoogleCaptchaConfig.Value.SiteKey', { action: 'submit' }).then(function (token) {
+                    // Add your logic to submit to your backend server here.
+                    console.log(token)
+                    document.getElementById("ContactFormModelToken").value = token;
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="page">
         <section class="contact">
-
             <div class="container">
                 <h2>Contactformulier @contactName</h2>
-                <form>
+                <form asp-action="SendMail" asp-controller="Mail" method="post">
+                    <input type="hidden" id="ContactFormModelToken" asp-for="Token" />
+
                     <div class="form-group">
-                        <label for="onderwerp">Onderwerp:</label>
-                        <input type="text" id="subject" name="subject" maxlength="10" rows="2" cols="20" required>
+                        <label asp-for="Subject">Onderwerp:</label>
+                        <input asp-for="Subject" class="form-control" />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
                     </div>
+
                     <div class="form-group">
-                        <label for="email">E-mail:</label>
-                        <input type="email" id="email" name="email" required>
+                        <label asp-for="FromEmail">E-mail:</label>
+                        <input asp-for="FromEmail" class="form-control" />
+                        <span asp-validation-for="FromEmail" class="text-danger"></span>
                     </div>
+
                     <div class="form-group">
-                        <label for="bericht">Bericht:</label>
-                        <textarea id="msg" name="msg" maxlength="10" rows="5" cols="40" required></textarea>
+                        <label asp-for="Body">Bericht:</label>
+                        <textarea asp-for="Body" class="form-control"></textarea>
+                        <span asp-validation-for="Body" class="text-danger"></span>
                     </div>
+
                     <button class="btn btn-primary" type="submit">Verzenden</button>
                 </form>
             </div>
-
         </section>
     </div>
-
 </body>
+

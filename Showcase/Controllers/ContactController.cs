@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Showcase.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace Showcase.Controllers
 {
@@ -17,6 +19,11 @@ namespace Showcase.Controllers
         public IActionResult ContactForm(string name)
         {
             ViewBag.ContactPerson = name;
+            return View();
+        }
+
+        public IActionResult ContactConfirmation()
+        {
             return View();
         }
     }
