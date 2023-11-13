@@ -1,4 +1,4 @@
-﻿namespace Showcase
+﻿namespace Showcase.Properties
 {
     public class GoogleCaptchaConfig
     {

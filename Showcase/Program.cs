@@ -1,4 +1,3 @@
-using Showcase;
 using Showcase.Properties;
 using Showcase.Services;
 

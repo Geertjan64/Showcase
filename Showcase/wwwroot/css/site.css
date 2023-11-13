@@ -1,3 +1,7 @@
+@font-face {
+    font-family: 'Arial';
+}
+
 html {
     font-size: 14px;
     position: relative;
@@ -7,6 +11,10 @@ html {
 body {
     margin-bottom: 60px;
     height: 100%;
+}
+
+.page:not(.cookies-accepted) {
+    display: none;
 }
 
 .button {
@@ -29,7 +37,8 @@ body {
 #cookieConsentdiv {
     z-index: 1000;
     position: fixed;
-    width: 400px;
+    position: absolute;
+    top: 0;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -39,23 +48,6 @@ body {
     text-align: center;
     border-radius: 30px 30px 0 0;
 }
-
-    #cookieConsentdiv button {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        border: none;
-        background-color: green;
-        padding: 10px 50px;
-        margin-top: -5px;
-        color: white;
-        transition: all ease 0.5s;
-    }
-
-        #cookieConsentdiv button:hover {
-            background-color: darkgreen;
-        }
-
     #cookieConsentdiv h3 {
         font-size: 22px;
     }

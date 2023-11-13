@@ -5,12 +5,14 @@
 @model MailRequest;
 @using Microsoft.Extensions.Configuration
 @using Microsoft.Extensions.Options;
+@using Showcase.Properties;
 @inject IOptions<GoogleCaptchaConfig> GoogleCaptchaConfig
 
 <head>
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/contact.css">
     <script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaConfig.Value.SiteKey"></script>
+    <script src="~/js/site.js"></script>
     <script>
         $(function () {
             grecaptcha.ready(function () {
@@ -48,7 +50,6 @@
                         <textarea asp-for="Body" class="form-control"></textarea>
                         <span asp-validation-for="Body" class="text-danger"></span>
                     </div>
-
                     <button class="btn btn-primary" type="submit">Verzenden</button>
                 </form>
             </div>

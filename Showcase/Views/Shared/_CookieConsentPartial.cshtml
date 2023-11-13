@@ -9,18 +9,18 @@
 @if (showBannerFlag)
 {
     <div id="cookieConsentdiv">
-        <h3 class="display-6">Cookie Policy</h3>
-        <p>PLEASE ACCEPT OUR <a asp-page="/CookiePolicy">COOKIE POLICY</a>.   </p>
-        <button type="button" data-cookie-string="@cookieStr">
-            <span aria-hidden="true">Accept</span>
+        <h3 class="display-6">Koekjes Beleid</h3>
+        <p>Kunt u de plaatstelijke Cookies accepteren? <a asp-page="/CookiePolicy">Koekjes Beleid</a>.   </p>
+        <button class="btn btn-primary" type="button" data-cookie-string="@cookieStr">
+            <span aria-hidden="true">Accepteren</span>
         </button>
     </div>
     <script type="text/javascript">
-
         $(document).ready(function () {
             $("#cookieConsentdiv button[data-cookie-string]").bind("click", function () {
                 document.cookie = $("#cookieConsentdiv button").attr("data-cookie-string");
                 $("#cookieConsentdiv").hide();
+                window.location.reload();
             });
         });
     </script>
