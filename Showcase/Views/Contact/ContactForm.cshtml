@@ -9,10 +9,14 @@
 @inject IOptions<GoogleCaptchaConfig> GoogleCaptchaConfig
 
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/contact.css">
     <script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaConfig.Value.SiteKey"></script>
     <script src="~/js/site.js"></script>
+
     <script>
         $(function () {
             grecaptcha.ready(function () {
@@ -30,8 +34,19 @@
         <section class="contact">
             <div class="container">
                 <h2>Contactformulier @contactName</h2>
-                <form asp-action="SendMail" asp-controller="Mail" method="post">
-                    <input type="hidden" id="ContactFormModelToken" asp-for="Token" />
+                <form id="contactForm" asp-action="SendMail" asp-controller="Mail" method="post">
+
+                    <div class="form-group">
+                        <label asp-for="FirstName">Voornaam:</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LastName">Achternaam:</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
 
                     <div class="form-group">
                         <label asp-for="Subject">Onderwerp:</label>
@@ -46,6 +61,12 @@
                     </div>
 
                     <div class="form-group">
+                        <label asp-for="Mobile">Mobiel:</label>
+                        <input asp-for="Mobile" class="form-control" />
+                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
                         <label asp-for="Body">Bericht:</label>
                         <textarea asp-for="Body" class="form-control"></textarea>
                         <span asp-validation-for="Body" class="text-danger"></span>
@@ -55,5 +76,8 @@
             </div>
         </section>
     </div>
+
+    <script type="text/javascript" src="/js/check-form.js"></script>
+
 </body>
 
