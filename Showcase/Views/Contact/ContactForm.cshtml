@@ -11,24 +11,12 @@
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaConfig.Value.SiteKey"></script>
 
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/contact.css">
-    <script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaConfig.Value.SiteKey"></script>
-    <script src="~/js/site.js"></script>
-
-    <script>
-        $(function () {
-            grecaptcha.ready(function () {
-                grecaptcha.execute('@GoogleCaptchaConfig.Value.SiteKey', { action: 'submit' }).then(function (token) {
-                    // Add your logic to submit to your backend server here.
-                    console.log(token)
-                    document.getElementById("ContactFormModelToken").value = token;
-                });
-            });
-        });
-    </script>
 </head>
+
 <body>
     <div class="page">
         <section class="contact">
@@ -78,6 +66,8 @@
     </div>
 
     <script type="text/javascript" src="/js/check-form.js"></script>
+    <script type="text/javascript" src="~/js/site.js"></script>
+    <script type="text/javascript" src="~/js/recaptcha.js"></script>
 
 </body>
 
