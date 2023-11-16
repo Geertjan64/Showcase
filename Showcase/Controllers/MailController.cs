@@ -17,14 +17,25 @@ namespace Showcase.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendMail([FromForm] MailRequest request)
         {
+            // Controleer de voorwaarden
+            if (string.IsNullOrEmpty(request.Subject) || request.Subject.Length > 200)
+            {
+                return BadRequest("Onderwerp mag maximaal 200 tekens zijn.");
+            }
+
+            if (string.IsNullOrEmpty(request.Body) || request.Body.Length > 600)
+            {
+                return BadRequest("Bericht mag maximaal 600 tekens zijn.");
+            }
+            
             try
             {
                 await mailService.SendEmailAsync(request);
-                return Ok();
+                return Ok("E-mail succesvol verzonden!");
             }
             catch (Exception ex)
             {
-                throw;
+                return BadRequest("E-mail is niet verzonden");
             }
 
         }

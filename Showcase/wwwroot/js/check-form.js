@@ -8,7 +8,8 @@
                 required: true
             },
             Subject: {
-                required: true
+                required: true,
+                maxlength: 200
             },
             FromEmail: {
                 required: true,
@@ -16,10 +17,14 @@
             },
             Mobile: {
                 required: true,
-                digits: true
+                digits: true,
+                maxlength: 20
+
             },
             Body: {
-                required: true
+                required: true,
+                maxlength: 600
+
             }
         },
         messages: {
@@ -30,6 +35,7 @@
                 required: "Voer uw e-mailadres in",
                 email: "Voer een geldig e-mailadres in"
             },
+
             Mobile: {
                 required: "Voer uw mobiele nummer in",
                 digits: "Voer alleen cijfers in"
