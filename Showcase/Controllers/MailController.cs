@@ -31,7 +31,7 @@ namespace Showcase.Controllers
             try
             {
                 await mailService.SendEmailAsync(request);
-                return Ok("E-mail succesvol verzonden!");
+                return Ok(new { success = true, message = "E-mail is verzonden" });
             }
             catch (Exception ex)
             {

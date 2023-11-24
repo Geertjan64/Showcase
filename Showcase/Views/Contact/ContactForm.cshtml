@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Contact";
     var contactName = ViewBag.ContactPerson;
+    var success = ViewData["success"];
 }
 @model MailRequest;
 @using Microsoft.Extensions.Configuration
@@ -15,9 +16,21 @@
 
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/contact.css">
+
 </head>
 
 <body>
+
+    @if (true.Equals(success))
+    {
+        <div class="alert alert-success" role="alert">
+            Het bericht is succesvol verzonden!
+        </div>
+        <script>
+            console.log('Success is true!');
+        </script>
+    }
+
     <div class="page">
         <section class="contact">
             <div class="container">
@@ -68,6 +81,6 @@
     <script type="text/javascript" src="/js/check-form.js"></script>
     <script type="text/javascript" src="~/js/site.js"></script>
     <script type="text/javascript" src="~/js/recaptcha.js"></script>
-
+    <script type="text/javascript" src="~/js/send-form.js"></script>
 </body>
 
