@@ -4,14 +4,16 @@ using Showcase.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Showcase.Data;
+using Showcase.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ShowcaseContextConnection") ?? throw new InvalidOperationException("Connection string 'ShowcaseContextConnection' not found.");
 
 builder.Services.AddDbContext<ShowcaseContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ShowcaseUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ShowcaseContext>();
 
 // Add services to the container.
@@ -20,6 +22,7 @@ builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddSignalR();
+builder.Services.AddRazorPages();
 
 
 
@@ -54,5 +57,6 @@ app.MapControllerRoute(
     pattern: "{controller=Contact}/{action=Profile}/{id?}");
 
 app.MapHub<GameHub>("/gameHub");
+app.MapRazorPages();
 
 app.Run();

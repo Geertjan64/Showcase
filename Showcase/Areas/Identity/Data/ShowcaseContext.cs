@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Showcase.Areas.Identity.Data;
 
 namespace Showcase.Data;
 
-public class ShowcaseContext : IdentityDbContext<IdentityUser>
+public class ShowcaseContext : IdentityDbContext<ShowcaseUser>
 {
     public ShowcaseContext(DbContextOptions<ShowcaseContext> options)
         : base(options)

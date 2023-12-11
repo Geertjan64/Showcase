@@ -1,0 +1,35 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+}
+
+.container {
+    max-width: 100%;
+}
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: lightseagreen;
+    color: #fff;
+    border-bottom: 1px solid lightseagreen;
+    border-radius: 8px 8px 0 0;
+}
+
+.nav-tabs .nav-item {
+    margin-bottom: 0;
+}
+
+.nav-tabs .nav-link {
+    color: black;
+    border: none;
+    border-radius: 8px 8px 0 0;
+}
+
+    .nav-tabs .nav-link.active {
+        background-color: #fff;
+        color: black;
+    }
