@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Showcase.Areas.Identity.Data
 
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ShowcaseUser> SignInManager
+@inject UserManager<ShowcaseUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
