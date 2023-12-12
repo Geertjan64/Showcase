@@ -2,6 +2,9 @@
     // Private variables
     const gameboardDiv = document.getElementById("gameboard");
     const cellClass = "game-cell";
+    const playerX = 'X';
+    const playerO = 'O';
+    let currentPlayer = playerX; // Start met speler X
 
     // Private function to generate the gameboard
     function generateGameboard() {
@@ -13,8 +16,15 @@
                 cell.dataset.col = j;
 
                 cell.addEventListener("click", function () {
-                    // Add logic here for cell click
                     handleCellClick(i, j);
+                });
+
+                cell.addEventListener("mouseover", function () {
+                    handleCellHover(i, j);
+                });
+
+                cell.addEventListener("mouseout", function () {
+                    handleCellUnhover(i, j);
                 });
 
                 gameboardDiv.appendChild(cell);
@@ -22,10 +32,34 @@
         }
     }
 
-    // Private function to respond to cell click
+    // Private function to handle cell click
     function handleCellClick(row, col) {
         console.log(`Clicked on row ${row}, column ${col}`);
-        // Add further logic for cell click
+        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
+        if (!cell.classList.contains('occupied')) {
+            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
+            cell.style.backgroundImage = imageUrl;
+            cell.classList.add('occupied');
+            currentPlayer = currentPlayer === playerX ? playerO : playerX;
+        }
+    }
+
+    // Private function to handle cell hover
+    function handleCellHover(row, col) {
+        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
+        if (!cell.classList.contains('occupied')) {
+            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
+            cell.style.backgroundImage = imageUrl;
+            cell.style.backgroundSize = 'cover';
+        }
+    }
+
+    // Private function to handle cell unhover
+    function handleCellUnhover(row, col) {
+        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
+        if (!cell.classList.contains('occupied')) {
+            cell.style.backgroundImage = 'none';
+        }
     }
 
     // Public interface (accessible from outside)
