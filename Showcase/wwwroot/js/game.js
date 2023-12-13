@@ -1,12 +1,43 @@
 ﻿const GameModule = (function () {
-    // Private variables
+
     const gameboardDiv = document.getElementById("gameboard");
     const cellClass = "game-cell";
+
     const playerX = 'X';
     const playerO = 'O';
-    let currentPlayer = playerX; // Start met speler X
+    let currentPlayer = playerX;
 
-    // Private function to generate the gameboard
+    let connection;
+
+    function initSignalR() {
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/gameHub")
+            .build();
+
+        connection.start()
+            .then(() => {
+                console.log('Connected to GameHub');
+                // Start het spel wanneer verbinding is gemaakt
+                startGame();
+            })
+            .catch((error) => {
+                console.error('Error connecting to GameHub:', error);
+            });
+
+        connection.on('GameStarted', (startingPlayer) => {
+            console.log(`Game started. Starting player: ${startingPlayer}`);
+            currentPlayer = startingPlayer;
+        });
+    }
+
+    function startGame() {
+        // Roep de SignalR-hub aan om het spel te starten
+        connection.invoke('StartGame')
+            .catch((error) => {
+                console.error('Error starting game:', error);
+            });
+    }
+
     function generateGameboard() {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
@@ -32,7 +63,6 @@
         }
     }
 
-    // Private function to handle cell click
     function handleCellClick(row, col) {
         console.log(`Clicked on row ${row}, column ${col}`);
         const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
@@ -44,7 +74,6 @@
         }
     }
 
-    // Private function to handle cell hover
     function handleCellHover(row, col) {
         const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
         if (!cell.classList.contains('occupied')) {
@@ -54,7 +83,6 @@
         }
     }
 
-    // Private function to handle cell unhover
     function handleCellUnhover(row, col) {
         const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
         if (!cell.classList.contains('occupied')) {
@@ -62,16 +90,15 @@
         }
     }
 
-    // Public interface (accessible from outside)
     return {
         init: function () {
             console.log("Game module initialized");
+            initSignalR(); 
             generateGameboard();
         }
     };
 })();
 
-// Start the GameModule when the DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
     GameModule.init();
 });

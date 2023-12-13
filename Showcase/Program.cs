@@ -22,6 +22,7 @@ builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<GameManager>();
 builder.Services.AddRazorPages();
 
 
@@ -55,6 +56,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Contact}/{action=Profile}/{id?}");
+
+
 
 app.MapHub<GameHub>("/gameHub");
 app.MapRazorPages();
