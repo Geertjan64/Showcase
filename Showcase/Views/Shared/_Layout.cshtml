@@ -29,7 +29,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="ContactForm">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="~/index.html">Boter Kaas en Eieren</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Spa" asp-action="Game">Boter Kaas en Eieren</a>
                         </li>
                     </ul>
                 </div>
@@ -52,6 +52,7 @@
     </footer>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

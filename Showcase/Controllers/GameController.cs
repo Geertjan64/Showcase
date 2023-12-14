@@ -22,7 +22,7 @@ namespace Showcase.Controllers
         public async Task<ActionResult<string>> StartGame()
         {
             await _hubContext.Clients.All.SendAsync("GameStarted", _gameManager.GetCurrentPlayer()); 
-            return Ok("Game started");
+            return Ok("Game started sbe3");
         }
 
         [HttpPost("move")]
