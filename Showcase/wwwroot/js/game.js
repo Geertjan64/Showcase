@@ -19,21 +19,42 @@
             .then(() => {
                 console.log('Connected to GameHub');
                 // Start het spel wanneer verbinding is gemaakt
-                startGame();
+                createGroup();
             })
             .catch((error) => {
                 console.error('Error connecting to GameHub:', error);
             });
 
-        connection.on('GameStarted', (startingPlayer) => {
-            console.log(`Game started. Starting player: ${startingPlayer}`);
+        connection.on('GroupCreated', (startingPlayer) => {
+            console.log(`Group created. First player: ${startingPlayer}`);
             currentPlayer = startingPlayer;
+        });
+
+        connection.on('GroupJoined', (joiningPlayer) => {
+            console.log(`Player joined. Player: ${joiningPlayer}`);
+        });
+
+        connection.on('GameStarted', (startingPlayer) => {
+            console.log(`Game started. First player: ${startingPlayer}`);
+            currentPlayer = startingPlayer;
+        });
+
+        connection.on('Move', (move) => {
+            console.log(`Received move: ${move}`);
+            updateGameboard(move);
+            // Handle the move logic here
+        });
+
+        connection.on('UpdateGameboard', (move) => {
+            console.log(`Received gameboard update: ${move}`);
+            // Handle the gameboard update logic here
+            updateGameboard(move);
         });
     }
 
-    function startGame() {
+    function createGroup() {
         // Roep de SignalR-hub aan om het spel te starten
-        connection.invoke('StartGame')
+        connection.invoke('CreateGroup')
             .catch((error) => {
                 console.error('Error starting game:', error);
             });
@@ -72,6 +93,7 @@
             cell.style.backgroundImage = imageUrl;
             cell.classList.add('occupied');
             currentPlayer = currentPlayer === playerX ? playerO : playerX;
+            connection.invoke('MakeMove', `${row},${col}`);
         }
     }
 
@@ -88,6 +110,17 @@
         const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
         if (!cell.classList.contains('occupied')) {
             cell.style.backgroundImage = 'none';
+        }
+    }
+    function updateGameboard(move) {
+        const [row, col] = move.split(',').map(Number);
+        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
+
+        if (!cell.classList.contains('occupied')) {
+            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
+            cell.style.backgroundImage = imageUrl;
+            cell.classList.add('occupied');
+            currentPlayer = currentPlayer === playerX ? playerO : playerX;
         }
     }
 

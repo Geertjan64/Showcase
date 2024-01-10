@@ -21,8 +21,9 @@ namespace Showcase.Controllers
         [HttpPost("start")]
         public async Task<ActionResult<string>> StartGame()
         {
-            await _hubContext.Clients.All.SendAsync("GameStarted", _gameManager.GetCurrentPlayer()); 
-            return Ok("Game started sbe3");
+            var currentPlayer = _gameManager.GetNextPlayer();
+            await _hubContext.Clients.All.SendAsync("GameStarted", currentPlayer);
+            return Ok("Game started");
         }
 
         [HttpPost("move")]
@@ -31,6 +32,5 @@ namespace Showcase.Controllers
             await _hubContext.Clients.All.SendAsync("Move", move);
             return Ok("Move sent");
         }
-
     }
 }
