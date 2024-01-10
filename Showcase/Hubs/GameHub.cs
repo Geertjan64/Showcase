@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Showcase.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Showcase.Hubs
@@ -7,7 +8,7 @@ namespace Showcase.Hubs
     public class GameHub : Hub
     {
         private readonly GameManager _gameManager;
-        private IList<string> _rooms = new List<string>();
+        private readonly List<string> _rooms = new List<string>();
 
         public GameHub(GameManager gameManager)
         {
@@ -49,6 +50,5 @@ namespace Showcase.Hubs
                 }
             }
         }
-
     }
 }

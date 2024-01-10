@@ -17,6 +17,8 @@
     font-size: 24px;
     font-weight: bold;
     transition: background-color 0.3s;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
     /* Hover-effect op de cel */

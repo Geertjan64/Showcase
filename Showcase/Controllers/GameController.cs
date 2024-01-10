@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Showcase.Hubs;
 using Showcase.Services;
+using System.Threading.Tasks;
 
 namespace Showcase.Controllers
 {

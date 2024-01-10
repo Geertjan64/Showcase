@@ -1,5 +1,5 @@
-﻿using Showcase.Areas.Identity.Data;
-using Showcase.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Showcase.Services
 {
@@ -9,12 +9,12 @@ namespace Showcase.Services
         private const string PlayerX = "X";
         private const string PlayerO = "O";
 
+        private readonly Dictionary<string, string> _playerConnections = new Dictionary<string, string>();
+
         public GameManager()
         {
             _currentPlayer = PlayerX;
         }
-
-        private readonly Dictionary<string, string> _playerConnections = new Dictionary<string, string>();
 
         public string GetPlayer(string connectionId)
         {
@@ -58,5 +58,4 @@ namespace Showcase.Services
             _currentPlayer = (_currentPlayer == PlayerX) ? PlayerO : PlayerX;
         }
     }
-
 }
