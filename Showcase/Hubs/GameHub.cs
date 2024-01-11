@@ -17,16 +17,19 @@ namespace Showcase.Hubs
 
         public async Task CreateGroup()
         {
-            string playerName = _gameManager.GetPlayer(Context.ConnectionId);
+            string? playerName = _gameManager.GetPlayer(Context.ConnectionId);
 
             if (playerName == null)
             {
+                Console.WriteLine("Player name is null");
                 playerName = _gameManager.AssignPlayer(Context.ConnectionId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, "GameGroup");
                 await Clients.Caller.SendAsync("GroupCreated", playerName);
                 await Clients.OthersInGroup("GameGroup").SendAsync("GroupJoined", playerName);
             }
         }
+
+        
 
         public async Task StartGame()
         {

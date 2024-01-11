@@ -30,6 +30,7 @@
         });
 
         connection.on('GroupJoined', (joiningPlayer) => {
+            currentPlayer = playerO;
             console.log(`Player joined. Player: ${joiningPlayer}`);
         });
 

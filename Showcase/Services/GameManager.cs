@@ -16,8 +16,10 @@ namespace Showcase.Services
             _currentPlayer = PlayerX;
         }
 
-        public string GetPlayer(string connectionId)
+        public string? GetPlayer(string connectionId)
         {
+            Console.WriteLine(connectionId + " VAN GETPLATER");
+
             if (_playerConnections.ContainsKey(connectionId))
             {
                 return _playerConnections[connectionId];
@@ -29,6 +31,7 @@ namespace Showcase.Services
         {
             string playerName = _playerConnections.Count == 0 ? "X" : "O";
             _playerConnections.Add(connectionId, playerName);
+            Console.WriteLine(connectionId);
             return playerName;
         }
 
