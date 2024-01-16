@@ -1,128 +1,88 @@
-﻿const GameModule = (function () {
+﻿var gameModule = (function () {
+    var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-    const gameboardDiv = document.getElementById("gameboard");
-    const cellClass = "game-cell";
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
 
-    const playerX = 'X';
-    const playerO = 'O';
-    let currentPlayer = playerX;
+    var currentPlayerSymbol = null; // Voeg deze regel toe
+    var playerSymbols = {};
 
-    let connection;
+    connection.on("playerConnected", function (connectionId, symbol) {
+        console.log(`Player ${symbol} connected with ID: ${connectionId}`);
+        currentPlayerSymbol = symbol;
+        playerSymbols[connectionId] = symbol;
+        updateBoardUI();
+    });
 
-    function initSignalR() {
+    connection.on("playerDisconnected", function (connectionId) {
+        console.log(`Player disconnected: ${connectionId}`);
+    });
 
-        connection = new signalR.HubConnectionBuilder()
-            .withUrl("/gameHub")
-            .build();
+    connection.on("startGame", function () {
+        console.log("Game started");
+        updateBoardUI();
+    });
 
-        connection.start()
-            .then(() => {
-                console.log('Connected to GameHub');
-                createGroup();
-            })
-            .catch((error) => {
-                console.error('Error connecting to GameHub:', error);
-            });
+    connection.on("moveMade", function (connectionId, row, col) {
+        console.log(`Move made by ${connectionId} at position (${row}, ${col})`);
+        board[row][col] = playerSymbols[connectionId];
+        updateBoardUI();
+    });
 
-        connection.on('GroupCreated', (startingPlayer) => {
-            console.log(`Group created. First player: ${startingPlayer}`);
-            currentPlayer = startingPlayer;
-        });
+    connection.on("gameEnd", function () {
+        console.log("Game ended");
+        // Implement any additional logic for the end of the game
+    });
 
-        connection.on('GroupJoined', (joiningPlayer) => {
-            currentPlayer = playerO;
-            console.log(`Player joined. Player: ${joiningPlayer}`);
-        });
+    // Implementeer de logica om zetten van de speler te verwerken en door te geven aan de backend
+    // Update de UI met het huidige bord en andere relevante informatie
+    // Function to update the UI based on the current state of the board
+    function updateBoardUI() {
+        var boardElement = document.getElementById("board");
+        boardElement.innerHTML = "";
 
-        connection.on('GameStarted', (startingPlayer) => {
-            console.log(`Game started. First player: ${startingPlayer}`);
-            currentPlayer = startingPlayer;
-        });
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+                var cellIndex = i * 3 + j;
 
-        connection.on('Move', (move) => {
-            console.log(`Received move: ${move}`);
-            updateGameboard(move);
-        });
+                var cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.dataset.index = cellIndex;
 
-        connection.on('UpdateGameboard', (move) => {
-            console.log(`Received gameboard update: ${move}`);
-            updateGameboard(move);
-        });
-    }
+                if (board[cellIndex]) {
+                    cell.classList.add(board[cellIndex]); // Voeg deze regel toe
+                } else {
+                    cell.addEventListener("click", function () {
+                        if (currentPlayerSymbol && currentPlayerSymbol === playerSymbols[connection.connectionId]) {
+                            var index = parseInt(this.dataset.index);
+                            makeMove(index);
+                        }
+                    });
+                }
 
-    function createGroup() {
-        connection.invoke('CreateGroup')
-            .catch((error) => {
-                console.error('Error starting game:', error);
-            });
-    }
-
-    function generateGameboard() {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                const cell = document.createElement("div");
-                cell.classList.add(cellClass);
-                cell.dataset.row = i;
-                cell.dataset.col = j;
-
-                cell.addEventListener("click", () => handleCellClick(i, j));
-                cell.addEventListener("mouseover", () => handleCellHover(i, j));
-                cell.addEventListener("mouseout", () => handleCellUnhover(i, j));
-
-                gameboardDiv.appendChild(cell);
+                boardElement.appendChild(cell);
             }
         }
     }
 
-    function handleCellClick(row, col) {
-        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
-        if (!cell.classList.contains('occupied')) {
-            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
-            cell.style.backgroundImage = imageUrl;
-            cell.classList.add('occupied');
-            currentPlayer = currentPlayer === playerX ? playerO : playerX;
-            connection.invoke('MakeMove', `${row},${col}`);
-        }
+    function startGame() {
+        // Voer hier de initiële setup uit, zoals het toevoegen van spelers
+        // en het weergeven van het bord
+        updateBoardUI();
     }
 
-    function handleCellHover(row, col) {
-        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
-        if (!cell.classList.contains('occupied')) {
-            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
-            cell.style.backgroundImage = imageUrl;
-            cell.style.backgroundSize = 'cover';
-        }
+    function init() {
+        // Roep de startGame-functie aan om het spel te starten
+        startGame();
     }
 
-    function handleCellUnhover(row, col) {
-        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
-        if (!cell.classList.contains('occupied')) {
-            cell.style.backgroundImage = 'none';
-        }
-    }
-
-    function updateGameboard(move) {
-        const [row, col] = move.split(',').map(Number);
-        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
-
-        if (!cell.classList.contains('occupied')) {
-            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
-            cell.style.backgroundImage = imageUrl;
-            cell.style.backgroundSize = 'cover'; // Voeg deze regel toe
-            cell.classList.add('occupied');
-            currentPlayer = currentPlayer === playerX ? playerO : playerX;
-        }
-    }
-
-    return {
-        init: function () {
-            console.log("Game module initialized");
-            initSignalR();
-            generateGameboard();
-        }
+        return {
+            init: init,
+        // Eventueel kun je hier methoden toevoegen die je nodig hebt in de frontend
     };
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
-    GameModule.init();
+    gameModule.init();
 });

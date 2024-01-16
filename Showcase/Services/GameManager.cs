@@ -1,64 +1,100 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.SignalR;
+using Showcase.Hubs;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Showcase.Services
 {
     public class GameManager
     {
-        private string _currentPlayer;
-        private const string PlayerX = "X";
-        private const string PlayerO = "O";
+        private readonly IHubContext<GameHub> hubContext;
+        private readonly Dictionary<string, string> playerConnections = new Dictionary<string, string>();
+        private readonly Dictionary<string, char> playerSymbols = new Dictionary<string, char>();
+        private readonly char[,] board = new char[3, 3];
+        private string currentPlayer;
 
-        private readonly Dictionary<string, string> _playerConnections = new Dictionary<string, string>();
-
-        public GameManager()
+        public GameManager(IHubContext<GameHub> hubContext)
         {
-            _currentPlayer = PlayerX;
+            this.hubContext = hubContext;
         }
 
-        public string? GetPlayer(string connectionId)
+        public void AddPlayer(string connectionId)
         {
-            Console.WriteLine(connectionId + " VAN GETPLATER");
+            playerConnections.Add(connectionId, connectionId);
 
-            if (_playerConnections.ContainsKey(connectionId))
+            if (playerConnections.Count == 1)
             {
-                return _playerConnections[connectionId];
+                playerSymbols.Add(connectionId, 'X');
+                currentPlayer = connectionId;
+                NotifyPlayerConnected(connectionId, 'X');
             }
-            return null;
+            else if (playerConnections.Count == 2)
+            {
+                playerSymbols.Add(connectionId, 'O');
+                NotifyPlayerConnected(connectionId, 'O');
+                NotifyStartGame();
+            }
         }
 
-        public string AssignPlayer(string connectionId)
+        public void MakeMove(string connectionId, int row, int col)
         {
-            string playerName = _playerConnections.Count == 0 ? "X" : "O";
-            _playerConnections.Add(connectionId, playerName);
-            Console.WriteLine(connectionId);
-            return playerName;
+            // ...
+
+            if (CheckForWinner() || CheckForTie())
+            {
+                NotifyGameEnd();
+                ResetGame();
+            }
+            else
+            {
+                currentPlayer = playerConnections.Values.First(id => id != connectionId);
+            }
         }
 
-        public string GetOtherPlayerConnectionId(string connectionId)
+        private void NotifyPlayerConnected(string connectionId, char symbol)
         {
-            var otherPlayer = _playerConnections.FirstOrDefault(x => x.Key != connectionId);
-            return otherPlayer.Value;
+            hubContext.Clients.All.SendAsync("playerConnected", connectionId, symbol);
         }
 
-        public string GetPlayer1()
+        private void NotifyPlayerDisconnected(string connectionId)
         {
-            return PlayerX;
+            hubContext.Clients.All.SendAsync("playerDisconnected", connectionId);
         }
 
-        public string GetPlayer2()
+        private void NotifyStartGame()
         {
-            return PlayerO;
+            hubContext.Clients.All.SendAsync("startGame");
         }
 
-        public string GetNextPlayer()
+        private void NotifyMove(string connectionId, int row, int col)
         {
-            return _currentPlayer;
+            hubContext.Clients.All.SendAsync("moveMade", connectionId, row, col);
         }
 
-        public void SwitchPlayer()
+        private void NotifyGameEnd()
         {
-            _currentPlayer = (_currentPlayer == PlayerX) ? PlayerO : PlayerX;
+            hubContext.Clients.All.SendAsync("gameEnd");
+        }
+
+        private bool CheckForWinner()
+        {
+            // Implementeer de logica om te controleren op een winnaar
+            // Return true als er een winnaar is, anders false
+            return false;
+        }
+
+        private bool CheckForTie()
+        {
+            // Implementeer de logica om te controleren op een gelijkspel
+            // Return true als het een gelijkspel is, anders false
+            return false;
+        }
+
+        private void ResetGame()
+        {
+            // Implementeer de logica om het spel te resetten
+            // Dit kan bijvoorbeeld het bord en de huidige speler opnieuw instellen
         }
     }
+
 }

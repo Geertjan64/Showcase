@@ -7,51 +7,22 @@ namespace Showcase.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly GameManager _gameManager;
-        private readonly List<string> _rooms = new List<string>();
+        private readonly GameManager gameManager;
 
-        public GameHub(GameManager gameManager)
+        public GameHub(GameManager manager)
         {
-            _gameManager = gameManager;
+            gameManager = manager;
         }
 
-        public async Task CreateGroup()
+        public override async Task OnConnectedAsync()
         {
-            string? playerName = _gameManager.GetPlayer(Context.ConnectionId);
-
-            if (playerName == null)
-            {
-                Console.WriteLine("Player name is null");
-                playerName = _gameManager.AssignPlayer(Context.ConnectionId);
-                await Groups.AddToGroupAsync(Context.ConnectionId, "GameGroup");
-                await Clients.Caller.SendAsync("GroupCreated", playerName);
-                await Clients.OthersInGroup("GameGroup").SendAsync("GroupJoined", playerName);
-            }
+            gameManager.AddPlayer(Context.ConnectionId);
+            await base.OnConnectedAsync();
         }
 
-        
-
-        public async Task StartGame()
+        public void MakeMove(int row, int col)
         {
-            await Clients.Group("GameGroup").SendAsync("GameStarted", _gameManager.GetNextPlayer());
-        }
-
-        public async Task MakeMove(string move)
-        {
-            string playerName = _gameManager.GetPlayer(Context.ConnectionId);
-
-            if (playerName != null)
-            {
-                await Clients.Group("GameGroup").SendAsync("Move", $"{playerName} made a move: {move}");
-
-                // Send the move to the specific player who made the move
-                string otherPlayerConnectionId = _gameManager.GetOtherPlayerConnectionId(Context.ConnectionId);
-                if (otherPlayerConnectionId != null)
-                {
-                    await Clients.Client(otherPlayerConnectionId).SendAsync("Move", $"{playerName} made a move: {move}");
-                    await Clients.All.SendAsync("UpdateGameboard", move);
-                }
-            }
+            gameManager.MakeMove(Context.ConnectionId, row, col);
         }
     }
 }
