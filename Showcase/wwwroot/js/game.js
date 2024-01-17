@@ -1,85 +1,71 @@
-﻿var gameModule = (function () {
+﻿// game.js
+
+var gameModule = (function () {
     var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
     connection.start().catch(function (err) {
         return console.error(err.toString());
     });
 
-    var currentPlayerSymbol = null; // Voeg deze regel toe
-    var playerSymbols = {};
+    document.getElementById("startGameButton").addEventListener("click", function () {
+        // Verberg de "Start Game" knop na klikken
+        document.getElementById("startGameButton").style.display = "none";
+
+        // Wanneer op de knop "Start Game" wordt geklikt, voeg de speler toe
+        connection.invoke("AddPlayer").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
 
     connection.on("playerConnected", function (connectionId, symbol) {
         console.log(`Player ${symbol} connected with ID: ${connectionId}`);
         currentPlayerSymbol = symbol;
         playerSymbols[connectionId] = symbol;
+
+        // Update de UI om te laten zien dat de speler is toegevoegd
         updateBoardUI();
+
+        // Voeg een melding toe aan de pagina
+        var notifications = document.getElementById("notifications");
+        notifications.innerHTML = `Je bent toegevoegd aan de game. Wachten op de volgende speler.`;
     });
 
     connection.on("playerDisconnected", function (connectionId) {
         console.log(`Player disconnected: ${connectionId}`);
+        // Implementeer logica om de UI bij te werken als een speler de verbinding verbreekt
     });
 
     connection.on("startGame", function () {
         console.log("Game started");
+        // Voeg hier de logica toe om het spel te starten
+        initializeBoard();
         updateBoardUI();
+
+        // Verberg de meldingen
+        document.getElementById("notifications").innerHTML = "";
     });
 
-    connection.on("moveMade", function (connectionId, row, col) {
-        console.log(`Move made by ${connectionId} at position (${row}, ${col})`);
-        board[row][col] = playerSymbols[connectionId];
-        updateBoardUI();
-    });
+    // ... (andere bestaande code)
 
-    connection.on("gameEnd", function () {
-        console.log("Game ended");
-        // Implement any additional logic for the end of the game
-    });
-
-    // Implementeer de logica om zetten van de speler te verwerken en door te geven aan de backend
-    // Update de UI met het huidige bord en andere relevante informatie
-    // Function to update the UI based on the current state of the board
     function updateBoardUI() {
-        var boardElement = document.getElementById("board");
-        boardElement.innerHTML = "";
-
-        for (var i = 0; i < 3; i++) {
-            for (var j = 0; j < 3; j++) {
-                var cellIndex = i * 3 + j;
-
-                var cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.dataset.index = cellIndex;
-
-                if (board[cellIndex]) {
-                    cell.classList.add(board[cellIndex]); // Voeg deze regel toe
-                } else {
-                    cell.addEventListener("click", function () {
-                        if (currentPlayerSymbol && currentPlayerSymbol === playerSymbols[connection.connectionId]) {
-                            var index = parseInt(this.dataset.index);
-                            makeMove(index);
-                        }
-                    });
-                }
-
-                boardElement.appendChild(cell);
-            }
-        }
+        // Voeg hier de logica toe om de UI bij te werken, bijvoorbeeld het weergeven van de spelers en het bord
+        // ...
     }
 
-    function startGame() {
-        // Voer hier de initiële setup uit, zoals het toevoegen van spelers
-        // en het weergeven van het bord
-        updateBoardUI();
+    function initializeBoard() {
+        // Voeg hier de initiële setup toe, zoals het toevoegen van spelers en het initialiseren van het bord
+        // ...
     }
+
+    // ... (andere bestaande functies)
 
     function init() {
-        // Roep de startGame-functie aan om het spel te starten
-        startGame();
+        // Voeg hier de initiële setup toe, zoals het toevoegen van event listeners
+        // ...
     }
 
-        return {
-            init: init,
-        // Eventueel kun je hier methoden toevoegen die je nodig hebt in de frontend
+    return {
+        init: init,
     };
 })();
 
