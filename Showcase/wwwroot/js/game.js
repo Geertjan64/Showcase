@@ -3,15 +3,17 @@
 var gameModule = (function () {
     var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
+    var currentPlayerSymbol;
+    var playerSymbols = {};
+    var gameBoard = [];
+
     connection.start().catch(function (err) {
         return console.error(err.toString());
     });
 
     document.getElementById("startGameButton").addEventListener("click", function () {
-        // Verberg de "Start Game" knop na klikken
         document.getElementById("startGameButton").style.display = "none";
 
-        // Wanneer op de knop "Start Game" wordt geklikt, voeg de speler toe
         connection.invoke("AddPlayer").catch(function (err) {
             return console.error(err.toString());
         });
@@ -22,46 +24,104 @@ var gameModule = (function () {
         currentPlayerSymbol = symbol;
         playerSymbols[connectionId] = symbol;
 
-        // Update de UI om te laten zien dat de speler is toegevoegd
+        // Initialize the game board if not already initialized
+        if (gameBoard.length === 0) {
+            initializeBoard();
+        }
+
         updateBoardUI();
 
-        // Voeg een melding toe aan de pagina
         var notifications = document.getElementById("notifications");
-        notifications.innerHTML = `Je bent toegevoegd aan de game. Wachten op de volgende speler.`;
+        notifications.innerHTML = `You are added to the game. Waiting for the next player.`;
     });
 
     connection.on("playerDisconnected", function (connectionId) {
         console.log(`Player disconnected: ${connectionId}`);
-        // Implementeer logica om de UI bij te werken als een speler de verbinding verbreekt
+        // Implement logic to update the UI when a player disconnects
     });
 
     connection.on("startGame", function () {
         console.log("Game started");
-        // Voeg hier de logica toe om het spel te starten
         initializeBoard();
         updateBoardUI();
-
-        // Verberg de meldingen
         document.getElementById("notifications").innerHTML = "";
     });
 
-    // ... (andere bestaande code)
+    connection.on("updateCell", function (row, col, symbol) {
+        gameBoard[row][col] = symbol;
+        updateBoardUI();
+    });
+
+    connection.on("gameOver", function (winner) {
+        document.getElementById("notifications").innerHTML = winner
+            ? `Player ${winner} wins!`
+            : "It's a draw!";
+        document.getElementById("restartGameButton").style.display = "block";
+    });
 
     function updateBoardUI() {
-        // Voeg hier de logica toe om de UI bij te werken, bijvoorbeeld het weergeven van de spelers en het bord
-        // ...
+        var board = document.getElementById("gameBoard");
+
+        if (!board) {
+            board = document.createElement("div");
+            board.id = "gameBoard";
+            document.body.appendChild(board);
+        }
+
+        // Clear existing cells
+        board.innerHTML = "";
+
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+                var cell = document.createElement("div");
+                cell.className = "cell";
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+
+                // Set the text content based on the symbol
+                cell.textContent = gameBoard[i][j] || "";
+
+                cell.addEventListener("click", function () {
+                    onCellClick(this);
+                });
+
+                console.log(`Created cell at row ${i}, col ${j} with content: ${cell.textContent}`);
+
+                board.appendChild(cell);
+            }
+        }
     }
 
     function initializeBoard() {
-        // Voeg hier de initiële setup toe, zoals het toevoegen van spelers en het initialiseren van het bord
-        // ...
+        gameBoard = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
     }
 
-    // ... (andere bestaande functies)
+    function onCellClick(cell) {
+        var row = parseInt(cell.dataset.row);
+        var col = parseInt(cell.dataset.col);
+        console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
+
+        if (gameBoard[row][col] === "" && currentPlayerSymbol) {
+            connection.invoke("MakeMove", row, col, currentPlayerSymbol).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    }
+
+    document.getElementById("restartGameButton").addEventListener("click", function () {
+        connection.invoke("RestartGame").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
 
     function init() {
-        // Voeg hier de initiële setup toe, zoals het toevoegen van event listeners
-        // ...
+        document.addEventListener("DOMContentLoaded", () => {
+            gameModule.init();
+        });
     }
 
     return {
@@ -69,6 +129,4 @@ var gameModule = (function () {
     };
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
-    gameModule.init();
-});
+gameModule.init();
