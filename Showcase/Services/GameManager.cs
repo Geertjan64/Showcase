@@ -26,6 +26,10 @@ namespace Showcase.Services
             }
             return null;
         }
+        public string GetCurrentPlayer()
+        {
+            return _currentPlayer;
+        }
 
         public string AssignPlayer(string connectionId)
         {

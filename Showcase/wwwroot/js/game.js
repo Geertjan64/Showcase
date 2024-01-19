@@ -29,8 +29,16 @@
             currentPlayer = startingPlayer;
         });
 
+        connection.on('UpdateGameStatus', (nextPlayer) => {
+            console.log(`Next player: ${nextPlayer}`);
+            if (nextPlayer === currentPlayer) {
+                // Jouw beurt, voer hier de nodige acties uit
+            } else {
+                // Niet jouw beurt, voer hier optionele acties uit (bijv. het bord vergrendelen)
+            }
+        });
+
         connection.on('GroupJoined', (joiningPlayer) => {
-            currentPlayer = playerO;
             console.log(`Player joined. Player: ${joiningPlayer}`);
         });
 
@@ -76,14 +84,24 @@
 
     function handleCellClick(row, col) {
         const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
+
         if (!cell.classList.contains('occupied')) {
             const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
+
+            // Check of het de beurt van de huidige speler is voordat een zet wordt geplaatst
+            if (currentPlayer != playerO) {
+                console.log("Het is niet jouw beurt!");
+                return;
+            }
+
             cell.style.backgroundImage = imageUrl;
             cell.classList.add('occupied');
             currentPlayer = currentPlayer === playerX ? playerO : playerX;
             connection.invoke('MakeMove', `${row},${col}`);
         }
     }
+
+
 
     function handleCellHover(row, col) {
         const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);

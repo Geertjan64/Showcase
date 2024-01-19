@@ -29,8 +29,6 @@ namespace Showcase.Hubs
             }
         }
 
-        
-
         public async Task StartGame()
         {
             await Clients.Group("GameGroup").SendAsync("GameStarted", _gameManager.GetNextPlayer());
@@ -40,18 +38,20 @@ namespace Showcase.Hubs
         {
             string playerName = _gameManager.GetPlayer(Context.ConnectionId);
 
-            if (playerName != null)
+            if (playerName != null && playerName == _gameManager.GetNextPlayer())
             {
                 await Clients.Group("GameGroup").SendAsync("Move", $"{playerName} made a move: {move}");
 
-                // Send the move to the specific player who made the move
-                string otherPlayerConnectionId = _gameManager.GetOtherPlayerConnectionId(Context.ConnectionId);
-                if (otherPlayerConnectionId != null)
-                {
-                    await Clients.Client(otherPlayerConnectionId).SendAsync("Move", $"{playerName} made a move: {move}");
-                    await Clients.All.SendAsync("UpdateGameboard", move);
-                }
+                // Stel de volgende speler in
+                _gameManager.SwitchPlayer();
+
+                // Stuur het spelbord alleen naar de specifieke speler die de zet heeft gedaan
+                await Clients.Client(Context.ConnectionId).SendAsync("UpdateGameboard", move);
+
+                // Stuur de bijgewerkte spelstatus naar alle verbonden clients
+                await Clients.All.SendAsync("UpdateGameStatus", _gameManager.GetNextPlayer());
             }
         }
+
     }
 }
