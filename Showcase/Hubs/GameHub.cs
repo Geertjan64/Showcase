@@ -1,47 +1,59 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿// GameHub.cs
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
+using Showcase.Areas.Identity.Data;
 using Showcase.Services;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Showcase.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly GameManager _gameManager;
-        private readonly List<string> _rooms = new List<string>();
+        private readonly GameManager gameManager;
+        private readonly UserManager<ShowcaseUser> userManager;
 
-        public GameHub(GameManager gameManager)
+        public GameHub(GameManager manager, UserManager<ShowcaseUser> userManager)
         {
-            _gameManager = gameManager;
+            gameManager = manager;
+            this.userManager = userManager;
         }
 
-        public async Task CreateGroup()
+        public async Task AddPlayer()
         {
-            string? playerName = _gameManager.GetPlayer(Context.ConnectionId);
+            var user = await userManager.GetUserAsync(Context.User);
+            char playerSymbol = gameManager.AddPlayer(user.Id);
 
-            if (playerName == null)
+            // Notify the player that they have been added
+            await Clients.Caller.SendAsync("playerConnected", user.Id, playerSymbol);
+
+            // Notify all connected clients that a player has been added
+            await Clients.AllExcept(Context.ConnectionId).SendAsync("playerConnected", user.Id, playerSymbol);
+
+            // If there are two players added, start the game
+            if (gameManager.GetPlayerCount() == 2)
             {
-                Console.WriteLine("Player name is null");
-                playerName = _gameManager.AssignPlayer(Context.ConnectionId);
-                await Groups.AddToGroupAsync(Context.ConnectionId, "GameGroup");
-                await Clients.Caller.SendAsync("GroupCreated", playerName);
-                await Clients.OthersInGroup("GameGroup").SendAsync("GroupJoined", playerName);
+                await StartGame();
             }
         }
 
         public async Task StartGame()
+
+        public async Task StartGame()
         {
-            await Clients.Group("GameGroup").SendAsync("GameStarted", _gameManager.GetNextPlayer());
+            // Add the logic to start the game here
+            await Clients.All.SendAsync("startGame");
         }
 
-        public async Task MakeMove(string move)
+        public async Task MakeMove(int row, int col, char symbol)
         {
-            string playerName = _gameManager.GetPlayer(Context.ConnectionId);
-
+            // Voeg de logica toe om de zet van een speler te verwerken
+            var currentPlayerId = Context.UserIdentifier;
             if (playerName != null && playerName == _gameManager.GetNextPlayer())
             {
                 await Clients.Group("GameGroup").SendAsync("Move", $"{playerName} made a move: {move}");
-
+            {
                 // Stel de volgende speler in
                 _gameManager.SwitchPlayer();
 
@@ -51,7 +63,9 @@ namespace Showcase.Hubs
                 // Stuur de bijgewerkte spelstatus naar alle verbonden clients
                 await Clients.All.SendAsync("UpdateGameStatus", _gameManager.GetNextPlayer());
             }
-        }
+                }
 
+            }
+        }
     }
 }

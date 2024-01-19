@@ -1,68 +1,97 @@
-﻿using System.Collections.Generic;
+﻿// GameManager.cs
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Showcase.Services
 {
     public class GameManager
     {
-        private string _currentPlayer;
-        private const string PlayerX = "X";
-        private const string PlayerO = "O";
+        private readonly Dictionary<string, char> playerSymbols = new Dictionary<string, char>();
+        private char[,] gameBoard = new char[3, 3];
+        private string currentPlayerId;
+        private bool isGameOver;
 
-        private readonly Dictionary<string, string> _playerConnections = new Dictionary<string, string>();
-
-        public GameManager()
+        public char AddPlayer(string connectionId)
         {
-            _currentPlayer = PlayerX;
-        }
+            char playerSymbol = playerSymbols.Count == 0 ? 'X' : 'O';
+            playerSymbols.Add(connectionId, playerSymbol);
 
-        public string? GetPlayer(string connectionId)
-        {
-            Console.WriteLine(connectionId + " VAN GETPLATER");
-
-            if (_playerConnections.ContainsKey(connectionId))
+            // Set the first added player as the current player
+            if (playerSymbols.Count == 1)
             {
-                return _playerConnections[connectionId];
+                currentPlayerId = connectionId;
             }
-            return null;
+
+            return playerSymbol;
         }
         public string GetCurrentPlayer()
         {
             return _currentPlayer;
         }
 
-        public string AssignPlayer(string connectionId)
+        public int GetPlayerCount()
         {
-            string playerName = _playerConnections.Count == 0 ? "X" : "O";
-            _playerConnections.Add(connectionId, playerName);
-            Console.WriteLine(connectionId);
-            return playerName;
+            return playerSymbols.Count;
         }
 
-        public string GetOtherPlayerConnectionId(string connectionId)
+        public string GetOtherPlayerId(string currentPlayerId)
         {
-            var otherPlayer = _playerConnections.FirstOrDefault(x => x.Key != connectionId);
-            return otherPlayer.Value;
+            return playerSymbols.Keys.FirstOrDefault(id => id != currentPlayerId);
         }
 
-        public string GetPlayer1()
+        public bool IsPlayerTurn(string currentPlayerId)
         {
-            return PlayerX;
+            return currentPlayerId == this.currentPlayerId;
         }
 
-        public string GetPlayer2()
+        public bool MakeMove(int row, int col, char symbol)
         {
-            return PlayerO;
+            if (gameBoard[row, col] == '\0' && !isGameOver)
+            {
+                gameBoard[row, col] = symbol;
+                return true;
+            }
+
+            return false;
         }
 
-        public string GetNextPlayer()
+        public bool IsBoardFull()
         {
-            return _currentPlayer;
+            return gameBoard.Cast<char>().All(cell => cell != '\0');
         }
 
-        public void SwitchPlayer()
+        public char CheckForWinner()
         {
-            _currentPlayer = (_currentPlayer == PlayerX) ? PlayerO : PlayerX;
+            // Check rows, columns, and diagonals for a winner
+            for (int i = 0; i < 3; i++)
+            {
+                if (gameBoard[i, 0] != '\0' && gameBoard[i, 0] == gameBoard[i, 1] && gameBoard[i, 1] == gameBoard[i, 2])
+                    return gameBoard[i, 0];
+
+                if (gameBoard[0, i] != '\0' && gameBoard[0, i] == gameBoard[1, i] && gameBoard[1, i] == gameBoard[2, i])
+                    return gameBoard[0, i];
+            }
+
+            if (gameBoard[0, 0] != '\0' && gameBoard[0, 0] == gameBoard[1, 1] && gameBoard[1, 1] == gameBoard[2, 2])
+                return gameBoard[0, 0];
+
+            if (gameBoard[0, 2] != '\0' && gameBoard[0, 2] == gameBoard[1, 1] && gameBoard[1, 1] == gameBoard[2, 0])
+                return gameBoard[0, 2];
+
+            return '\0'; // No winner yet
+        }
+
+        public void SwitchTurn()
+        {
+            currentPlayerId = GetOtherPlayerId(currentPlayerId);
+        }
+
+        public void ResetGame()
+        {
+            gameBoard = new char[3, 3];
+            isGameOver = false;
         }
     }
 }

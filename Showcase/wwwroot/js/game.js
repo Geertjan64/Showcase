@@ -1,33 +1,39 @@
-﻿const GameModule = (function () {
+﻿// game.js
 
-    const gameboardDiv = document.getElementById("gameboard");
-    const cellClass = "game-cell";
+var gameModule = (function () {
+    var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-    const playerX = 'X';
-    const playerO = 'O';
-    let currentPlayer = playerX;
+    var currentPlayerSymbol;
+    var playerSymbols = {};
+    var gameBoard = [];
 
-    let connection;
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
 
-    function initSignalR() {
+    document.getElementById("startGameButton").addEventListener("click", function () {
+        document.getElementById("startGameButton").style.display = "none";
 
-        connection = new signalR.HubConnectionBuilder()
-            .withUrl("/gameHub")
-            .build();
-
-        connection.start()
-            .then(() => {
-                console.log('Connected to GameHub');
-                createGroup();
-            })
-            .catch((error) => {
-                console.error('Error connecting to GameHub:', error);
-            });
-
-        connection.on('GroupCreated', (startingPlayer) => {
-            console.log(`Group created. First player: ${startingPlayer}`);
-            currentPlayer = startingPlayer;
+        connection.invoke("AddPlayer").catch(function (err) {
+            return console.error(err.toString());
         });
+    });
+
+    connection.on("playerConnected", function (connectionId, symbol) {
+        console.log(`Player ${symbol} connected with ID: ${connectionId}`);
+        currentPlayerSymbol = symbol;
+        playerSymbols[connectionId] = symbol;
+
+        // Initialize the game board if not already initialized
+        if (gameBoard.length === 0) {
+            initializeBoard();
+        }
+
+        updateBoardUI();
+
+        var notifications = document.getElementById("notifications");
+        notifications.innerHTML = `You are added to the game. Waiting for the next player.`;
+    });
 
         connection.on('UpdateGameStatus', (nextPlayer) => {
             console.log(`Next player: ${nextPlayer}`);
@@ -42,42 +48,54 @@
             console.log(`Player joined. Player: ${joiningPlayer}`);
         });
 
-        connection.on('GameStarted', (startingPlayer) => {
-            console.log(`Game started. First player: ${startingPlayer}`);
-            currentPlayer = startingPlayer;
-        });
+    connection.on("startGame", function () {
+        console.log("Game started");
+        initializeBoard();
+        updateBoardUI();
+        document.getElementById("notifications").innerHTML = "";
+    });
 
-        connection.on('Move', (move) => {
-            console.log(`Received move: ${move}`);
-            updateGameboard(move);
-        });
+    connection.on("updateCell", function (row, col, symbol) {
+        gameBoard[row][col] = symbol;
+        updateBoardUI();
+    });
 
-        connection.on('UpdateGameboard', (move) => {
-            console.log(`Received gameboard update: ${move}`);
-            updateGameboard(move);
-        });
-    }
+    connection.on("gameOver", function (winner) {
+        document.getElementById("notifications").innerHTML = winner
+            ? `Player ${winner} wins!`
+            : "It's a draw!";
+        document.getElementById("restartGameButton").style.display = "block";
+    });
 
-    function createGroup() {
-        connection.invoke('CreateGroup')
-            .catch((error) => {
-                console.error('Error starting game:', error);
-            });
-    }
+    function updateBoardUI() {
+        var board = document.getElementById("gameBoard");
 
-    function generateGameboard() {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                const cell = document.createElement("div");
-                cell.classList.add(cellClass);
+        if (!board) {
+            board = document.createElement("div");
+            board.id = "gameBoard";
+            document.body.appendChild(board);
+        }
+
+        // Clear existing cells
+        board.innerHTML = "";
+
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+                var cell = document.createElement("div");
+                cell.className = "cell";
                 cell.dataset.row = i;
                 cell.dataset.col = j;
 
-                cell.addEventListener("click", () => handleCellClick(i, j));
-                cell.addEventListener("mouseover", () => handleCellHover(i, j));
-                cell.addEventListener("mouseout", () => handleCellUnhover(i, j));
+                // Set the text content based on the symbol
+                cell.textContent = gameBoard[i][j] || "";
 
-                gameboardDiv.appendChild(cell);
+                cell.addEventListener("click", function () {
+                    onCellClick(this);
+                });
+
+                console.log(`Created cell at row ${i}, col ${j} with content: ${cell.textContent}`);
+
+                board.appendChild(cell);
             }
         }
     }
@@ -112,35 +130,28 @@
         }
     }
 
-    function handleCellUnhover(row, col) {
-        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
-        if (!cell.classList.contains('occupied')) {
-            cell.style.backgroundImage = 'none';
+        if (gameBoard[row][col] === "" && currentPlayerSymbol) {
+            connection.invoke("MakeMove", row, col, currentPlayerSymbol).catch(function (err) {
+                return console.error(err.toString());
+            });
         }
     }
 
-    function updateGameboard(move) {
-        const [row, col] = move.split(',').map(Number);
-        const cell = document.querySelector(`.${cellClass}[data-row="${row}"][data-col="${col}"]`);
+    document.getElementById("restartGameButton").addEventListener("click", function () {
+        connection.invoke("RestartGame").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
 
-        if (!cell.classList.contains('occupied')) {
-            const imageUrl = currentPlayer === playerX ? 'url(/images/x.png)' : 'url(/images/o.png)';
-            cell.style.backgroundImage = imageUrl;
-            cell.style.backgroundSize = 'cover'; // Voeg deze regel toe
-            cell.classList.add('occupied');
-            currentPlayer = currentPlayer === playerX ? playerO : playerX;
-        }
+    function init() {
+        document.addEventListener("DOMContentLoaded", () => {
+            gameModule.init();
+        });
     }
 
     return {
-        init: function () {
-            console.log("Game module initialized");
-            initSignalR();
-            generateGameboard();
-        }
+        init: init,
     };
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
-    GameModule.init();
-});
+gameModule.init();
