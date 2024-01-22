@@ -1,29 +1,33 @@
-﻿// GameHub.cs
-
+﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Showcase.Areas.Identity.Data;
 using Showcase.Services;
 using System.Threading.Tasks;
+using Showcase.Models;
 
 namespace Showcase.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly GameManager gameManager;
-        private readonly UserManager<ShowcaseUser> userManager;
+        private readonly GameManager _gameManager;
+        private readonly UserManager<ShowcaseUser> _userManager;
+
+        public List<Player> Players { get; set; } = new List<Player>();
 
         public GameHub(GameManager manager, UserManager<ShowcaseUser> userManager)
         {
-            gameManager = manager;
-            this.userManager = userManager;
+            _gameManager = manager;
+            _userManager = userManager;
         }
 
         public async Task AddPlayer()
         {
-            var user = await userManager.GetUserAsync(Context.User);
-            char playerSymbol = gameManager.AddPlayer(user.Id);
+            var user = await _userManager.GetUserAsync(Context.User);
+            char playerSymbol = _gameManager.AddPlayer(user.Id);
+
+            Players.Add(new Player(user.Id, playerSymbol));
 
             // Notify the player that they have been added
             await Clients.Caller.SendAsync("playerConnected", user.Id, playerSymbol);
@@ -31,70 +35,22 @@ namespace Showcase.Hubs
             // Notify all connected clients that a player has been added
             await Clients.AllExcept(Context.ConnectionId).SendAsync("playerConnected", user.Id, playerSymbol);
 
+            if (_gameManager.GetPlayerCount() == 1)
+            {
+                Console.WriteLine(user.Id);
+            }
+
             // If there are two players added, start the game
-            if (gameManager.GetPlayerCount() == 2)
+            if (_gameManager.GetPlayerCount() == 2)
             {
                 await StartGame();
             }
         }
 
-        private async Task StartGame()
+        public async Task StartGame()
         {
             // Add the logic to start the game here
             await Clients.All.SendAsync("startGame");
         }
-
-        public async Task MakeMove(int row, int col, char symbol)
-        {
-            // Voeg de logica toe om de zet van een speler te verwerken
-            var currentPlayerId = Context.UserIdentifier;
-            var otherPlayerId = gameManager.GetOtherPlayerId(currentPlayerId);
-
-            if (gameManager.IsPlayerTurn(currentPlayerId))
-            {
-                if (gameManager.MakeMove(row, col, symbol))
-                {
-                    // Stuur de zet naar beide spelers
-                    await Clients.Client(currentPlayerId).SendAsync("updateCell", row, col, symbol);
-                    await Clients.Client(otherPlayerId).SendAsync("updateCell", row, col, symbol);
-
-                    // Controleer of het spel is afgelopen na deze zet
-                    var winner = gameManager.CheckForWinner();
-                    if (winner != '\0')
-                    {
-                        // Stuur een bericht naar beide spelers dat het spel is afgelopen
-                        await Clients.Client(currentPlayerId).SendAsync("gameOver", winner);
-                        await Clients.Client(otherPlayerId).SendAsync("gameOver", winner);
-                    }
-                    else if (gameManager.IsBoardFull())
-                    {
-                        // Als het bord vol is en er is geen winnaar, stuur een bericht naar beide spelers dat het een gelijkspel is
-                        await Clients.Client(currentPlayerId).SendAsync("gameOver", null);
-                        await Clients.Client(otherPlayerId).SendAsync("gameOver", null);
-                    }
-                    else
-                    {
-                        // Wissel van beurt
-                        gameManager.SwitchTurn();
-                    }
-                }
-            }
-        }
-
-        public async Task RestartGame()
-        {
-            // Voeg de logica toe om het spel opnieuw te starten
-            var currentPlayerId = Context.UserIdentifier;
-            var otherPlayerId = gameManager.GetOtherPlayerId(currentPlayerId);
-
-            // Stuur het bericht naar beide spelers om het spel te herstarten
-            await Clients.Client(currentPlayerId).SendAsync("startGame");
-            await Clients.Client(otherPlayerId).SendAsync("startGame");
-
-            // Reset het spel in de GameManager
-            gameManager.ResetGame();
-        }
-
-        // ... (other existing code)
     }
 }

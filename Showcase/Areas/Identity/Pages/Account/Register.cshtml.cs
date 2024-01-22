@@ -145,7 +145,7 @@ namespace Showcase.Areas.Identity.Pages.Account
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-                    var player = new Player(userId);
+                    //var player = new Player(userId);
 
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",

@@ -1,9 +1,9 @@
-﻿// game.js
+﻿var gameModule = (function () {
+    let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-var gameModule = (function () {
-    var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+    let currentPlayerSymbol;
+    let currentPlayerId;
 
-    var currentPlayerSymbol;
     var playerSymbols = {};
     var gameBoard = [];
 
@@ -19,9 +19,17 @@ var gameModule = (function () {
         });
     });
 
+
     connection.on("playerConnected", function (connectionId, symbol) {
         console.log(`Player ${symbol} connected with ID: ${connectionId}`);
-        currentPlayerSymbol = symbol;
+
+        // Stel firstPlayerId alleen in als het nog niet is ingesteld
+        if (!currentPlayerId) {
+            currentPlayerId = connectionId;
+            currentPlayerSymbol = symbol;
+            console.log(`Starting player: ${currentPlayerId} met symbool ${currentPlayerSymbol}`);
+        }
+
         playerSymbols[connectionId] = symbol;
 
         // Initialize the game board if not already initialized
@@ -29,34 +37,22 @@ var gameModule = (function () {
             initializeBoard();
         }
 
-        updateBoardUI();
-
         var notifications = document.getElementById("notifications");
         notifications.innerHTML = `You are added to the game. Waiting for the next player.`;
     });
 
-    connection.on("playerDisconnected", function (connectionId) {
-        console.log(`Player disconnected: ${connectionId}`);
-        // Implement logic to update the UI when a player disconnects
-    });
-
     connection.on("startGame", function () {
+       
         console.log("Game started");
         initializeBoard();
         updateBoardUI();
-        document.getElementById("notifications").innerHTML = "";
+        
+        document.getElementById("notifications").innerHTML = 'Game started. Starting player: ${startingPlayerId}';
     });
 
     connection.on("updateCell", function (row, col, symbol) {
         gameBoard[row][col] = symbol;
         updateBoardUI();
-    });
-
-    connection.on("gameOver", function (winner) {
-        document.getElementById("notifications").innerHTML = winner
-            ? `Player ${winner} wins!`
-            : "It's a draw!";
-        document.getElementById("restartGameButton").style.display = "block";
     });
 
     function updateBoardUI() {
@@ -105,18 +101,17 @@ var gameModule = (function () {
         var col = parseInt(cell.dataset.col);
         console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
 
-        if (gameBoard[row][col] === "" && currentPlayerSymbol) {
+        // Controleer of de huidige speler de startende speler is
+        var isStartingPlayer = currentPlayerId && playerSymbols[currentPlayerId] === currentPlayerSymbol;
+
+        // Voer de zet alleen uit als de cel leeg is en de huidige speler de startende speler is
+        if (gameBoard[row][col] === "" && isStartingPlayer) {
             connection.invoke("MakeMove", row, col, currentPlayerSymbol).catch(function (err) {
                 return console.error(err.toString());
             });
         }
     }
 
-    document.getElementById("restartGameButton").addEventListener("click", function () {
-        connection.invoke("RestartGame").catch(function (err) {
-            return console.error(err.toString());
-        });
-    });
 
     function init() {
         document.addEventListener("DOMContentLoaded", () => {
