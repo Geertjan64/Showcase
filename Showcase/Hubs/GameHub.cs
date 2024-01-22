@@ -29,10 +29,8 @@ namespace Showcase.Hubs
 
             Players.Add(new Player(user.Id, playerSymbol));
 
-            // Notify the player that they have been added
             await Clients.Caller.SendAsync("playerConnected", user.Id, playerSymbol);
 
-            // Notify all connected clients that a player has been added
             await Clients.AllExcept(Context.ConnectionId).SendAsync("playerConnected", user.Id, playerSymbol);
 
             if (_gameManager.GetPlayerCount() == 1)
@@ -40,7 +38,6 @@ namespace Showcase.Hubs
                 Console.WriteLine(user.Id);
             }
 
-            // If there are two players added, start the game
             if (_gameManager.GetPlayerCount() == 2)
             {
                 await StartGame();
@@ -49,7 +46,6 @@ namespace Showcase.Hubs
 
         public async Task StartGame()
         {
-            // Add the logic to start the game here
             await Clients.All.SendAsync("startGame");
         }
     }

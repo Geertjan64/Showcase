@@ -15,7 +15,6 @@ namespace Showcase.Services
             char playerSymbol = playerSymbols.Count == 0 ? 'X' : 'O';
             playerSymbols.Add(connectionId, playerSymbol);
 
-            // Stel de eerste toegevoegde speler in als de huidige speler
             if (playerSymbols.Count == 1)
             {
                 currentPlayerId = connectionId;

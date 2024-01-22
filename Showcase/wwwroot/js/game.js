@@ -23,7 +23,6 @@
     connection.on("playerConnected", function (connectionId, symbol) {
         console.log(`Player ${symbol} connected with ID: ${connectionId}`);
 
-        // Stel firstPlayerId alleen in als het nog niet is ingesteld
         if (!currentPlayerId) {
             currentPlayerId = connectionId;
             currentPlayerSymbol = symbol;
@@ -32,7 +31,6 @@
 
         playerSymbols[connectionId] = symbol;
 
-        // Initialize the game board if not already initialized
         if (gameBoard.length === 0) {
             initializeBoard();
         }
@@ -64,7 +62,6 @@
             document.body.appendChild(board);
         }
 
-        // Clear existing cells
         board.innerHTML = "";
 
         for (var i = 0; i < 3; i++) {
@@ -74,7 +71,6 @@
                 cell.dataset.row = i;
                 cell.dataset.col = j;
 
-                // Set the text content based on the symbol
                 cell.textContent = gameBoard[i][j] || "";
 
                 cell.addEventListener("click", function () {
@@ -101,10 +97,8 @@
         var col = parseInt(cell.dataset.col);
         console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
 
-        // Controleer of de huidige speler de startende speler is
         var isStartingPlayer = currentPlayerId && playerSymbols[currentPlayerId] === currentPlayerSymbol;
 
-        // Voer de zet alleen uit als de cel leeg is en de huidige speler de startende speler is
         if (gameBoard[row][col] === "" && isStartingPlayer) {
             connection.invoke("MakeMove", row, col, currentPlayerSymbol).catch(function (err) {
                 return console.error(err.toString());
