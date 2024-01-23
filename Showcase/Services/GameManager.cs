@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Showcase.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,10 @@ namespace Showcase.Services
     {
         private readonly Dictionary<string, char> playerSymbols = new Dictionary<string, char>();
         private string currentPlayerId;
-        
+        private TicTacToe _ticTacToe;
+        public GameManager() {
+            //_ticTacToe = new TicTacToe();
+        }
 
         public char AddPlayer(string connectionId)
         {
@@ -21,6 +25,11 @@ namespace Showcase.Services
             }
 
             return playerSymbol;
+        }
+
+        public void MakeMove(string playerId, int row, int col)
+        {
+
         }
 
         public int GetPlayerCount()
