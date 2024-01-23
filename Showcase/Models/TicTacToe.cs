@@ -60,7 +60,6 @@ namespace Showcase.Models
             CheckGameState();
             SwitchPlayer();
 
-
             return true;
         }
 
@@ -77,13 +76,9 @@ namespace Showcase.Models
             }
         }
 
-        public void AddPlayer(Player player)
+        public void JoinGame(Player player2)
         {
-            Player2 = player;
-        }
-
-        public void StartGame()
-        {
+            Player2 = player2;
             GameState = GameState.Started;
         }
 
@@ -132,6 +127,7 @@ namespace Showcase.Models
             if (isBoardFull)
             {
                 GameResult = GameResult.Draw;
+                GameState = GameState.Finished;
             }
         }
 
@@ -140,11 +136,13 @@ namespace Showcase.Models
             if (player == 1)
             {
                 GameResult = GameResult.Player1;
+                GameState = GameState.Finished;
             }
             
             if (player == 2) 
             {
                 GameResult = GameResult.Player2;
+                GameState = GameState.Finished;
             }
         }
     }
