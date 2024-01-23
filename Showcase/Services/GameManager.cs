@@ -11,7 +11,7 @@ namespace Showcase.Services
         private readonly Dictionary<string, char> playerSymbols = new Dictionary<string, char>();
         private TicTacToe _ticTacToe;
 
-        public GameManager(Player player) 
+        public GameManager() 
         { 
 
         }
