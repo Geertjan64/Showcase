@@ -3,7 +3,8 @@ using System.Composition.Convention;
 
 namespace Showcase.Models
 {
-    public enum Turn {
+    public enum Turn
+    {
         Player1 = 1,
         Player2 = 2,
     }
@@ -27,8 +28,8 @@ namespace Showcase.Models
         public int Id { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
-        public int[,] Board {  get; set; }
-        public Turn Turn {  get; set; }
+        public int[,] Board { get; set; }
+        public Turn Turn { get; set; }
         public GameState GameState { get; set; }
         public GameResult GameResult { get; set; }
 
@@ -52,11 +53,17 @@ namespace Showcase.Models
             return false;
         }
 
-        public bool MakeMove(int row, int col)
-        { 
-            if (!ValidateMove(row, col)) { return false; }
+        public bool ValidTurn(Player player)
+        {
+            return (int)Turn == player.Symbol;
+        }
 
-            Board[row, col] = (int)Turn;
+        public bool MakeMove(int row, int col, Player player)
+        {
+            if (!ValidTurn(player)) return false;
+            if (!ValidateMove(row, col)) return false; 
+
+            Board[row, col] = player.Symbol;
             CheckGameState();
             SwitchPlayer();
 
@@ -138,8 +145,8 @@ namespace Showcase.Models
                 GameResult = GameResult.Player1;
                 GameState = GameState.Finished;
             }
-            
-            if (player == 2) 
+
+            if (player == 2)
             {
                 GameResult = GameResult.Player2;
                 GameState = GameState.Finished;

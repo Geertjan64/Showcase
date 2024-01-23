@@ -4,17 +4,16 @@
     let currentPlayerSymbol;
     let currentPlayerId;
 
-    var playerSymbols = {};
     var gameBoard = [];
 
     connection.start().catch(function (err) {
         return console.error(err.toString());
     });
 
-    document.getElementById("startGameButton").addEventListener("click", function () {
-        document.getElementById("startGameButton").style.display = "none";
+    document.getElementById("createGameButton").addEventListener("click", function () {
+        document.getElementById("createGameButton").style.display = "none";
 
-        connection.invoke("AddPlayer").catch(function (err) {
+        connection.invoke("CreateGame").catch(function (err) {
             return console.error(err.toString());
         });
     });

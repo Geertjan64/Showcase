@@ -9,34 +9,26 @@ namespace Showcase.Services
     {
 
         private readonly Dictionary<string, char> playerSymbols = new Dictionary<string, char>();
-        private string currentPlayerId;
         private TicTacToe _ticTacToe;
-        public GameManager() {
-            //_ticTacToe = new TicTacToe();
+
+        public GameManager(Player player) 
+        { 
+
         }
 
-        public char AddPlayer(string connectionId)
+        public void CreateGame(Player player)
         {
-            char playerSymbol = playerSymbols.Count == 0 ? 'X' : 'O';
-            playerSymbols.Add(connectionId, playerSymbol);
-
-            if (playerSymbols.Count == 1)
-            {
-                currentPlayerId = connectionId;
-            }
-
-            return playerSymbol;
+            _ticTacToe = new TicTacToe(player);
         }
 
-        public void MakeMove(string playerId, int row, int col)
+        public void JoinGame(Player player) 
         {
-
+            _ticTacToe.JoinGame(player);
         }
 
-        public int GetPlayerCount()
+        public void MakeMove(int row, int col, Player player)
         {
-            return playerSymbols.Count;
+            _ticTacToe.MakeMove(row, col, player);
         }
-
     }
 }
