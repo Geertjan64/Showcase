@@ -12,12 +12,21 @@
 
     document.getElementById("createGameButton").addEventListener("click", function () {
         document.getElementById("createGameButton").style.display = "none";
+        document.getElementById("gameList").style.display = "none";
 
         connection.invoke("CreateGame").catch(function (err) {
             return console.error(err.toString());
         });
     });
 
+    connection.on("gameCreated", function (gameId) {
+        console.log(`Game created with ID: ${gameId}`);
+        createJoinButton(gameId);
+    });
+
+    connection.on("gameJoined", function (gameId, playerId) {
+        console.log(`Player ${playerId} joined game with ID: ${gameId}`);
+    });
 
     connection.on("playerConnected", function (connectionId, symbol) {
         console.log(`Player ${symbol} connected with ID: ${connectionId}`);
@@ -39,18 +48,35 @@
     });
 
     connection.on("startGame", function () {
-       
-        console.log("Game started");
-        initializeBoard();
-        updateBoardUI();
-        
-        document.getElementById("notifications").innerHTML = 'Game started. Starting player: ${startingPlayerId}';
+        startGame();
     });
 
     connection.on("updateCell", function (row, col, symbol) {
         gameBoard[row][col] = symbol;
         updateBoardUI();
     });
+
+    function startGame() {
+        console.log("Game started");
+        initializeBoard();
+        updateBoardUI();
+    }
+ 
+    function createJoinButton(gameId) {
+        var list = document.getElementById("availableGames");
+        var joinButton = document.createElement("button");
+        joinButton.textContent = "Join game " + gameId;
+        joinButton.id = gameId;
+        joinButton.addEventListener("click", function () {
+            connection.invoke("JoinGame", gameId).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+
+        var listItem = document.createElement("li");
+        listItem.appendChild(joinButton);
+        list.appendChild(listItem);
+    }
 
     function updateBoardUI() {
         var board = document.getElementById("gameBoard");
@@ -104,7 +130,6 @@
             });
         }
     }
-
 
     function init() {
         document.addEventListener("DOMContentLoaded", () => {

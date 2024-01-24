@@ -7,9 +7,7 @@ namespace Showcase.Services
 {
     public class GameManager
     {
-
-        private readonly Dictionary<string, char> playerSymbols = new Dictionary<string, char>();
-        private TicTacToe _ticTacToe;
+        public TicTacToe Game;
 
         public GameManager() 
         { 
@@ -18,17 +16,17 @@ namespace Showcase.Services
 
         public void CreateGame(Player player)
         {
-            _ticTacToe = new TicTacToe(player);
+            Game = new TicTacToe(player);
         }
 
-        public void JoinGame(Player player) 
+        public void JoinGame(string gameId, Player player) 
         {
-            _ticTacToe.JoinGame(player);
+            Game.JoinGame(gameId, player);
         }
 
         public void MakeMove(int row, int col, Player player)
         {
-            _ticTacToe.MakeMove(row, col, player);
+            Game.MakeMove(row, col, player);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Showcase.Models
 
     public class TicTacToe
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public int[,] Board { get; set; }
@@ -35,6 +35,7 @@ namespace Showcase.Models
 
         public TicTacToe(Player startingPlayer)
         {
+            Id = Guid.NewGuid().ToString();
             Board = new int[3, 3];
             Player1 = startingPlayer;
             GameState = GameState.WaitingForSecondPlayer;
@@ -83,8 +84,11 @@ namespace Showcase.Models
             }
         }
 
-        public void JoinGame(Player player2)
+        public void JoinGame(string gameId, Player player2)
         {
+            if (Id != gameId)
+                return;
+
             Player2 = player2;
             GameState = GameState.Started;
         }

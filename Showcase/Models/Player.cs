@@ -8,10 +8,9 @@ namespace Showcase.Models
         public string Id { get; set; }
         public int Symbol { get; set; }
 
-        public Player(string id, int symbol)
+        public Player(string id)
         {
             Id = id;
-            Symbol = symbol;
         }
     }
 }

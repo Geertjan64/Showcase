@@ -13,6 +13,7 @@ namespace Showcase.Hubs
     {
         private readonly GameManager _gameManager;
         private readonly UserManager<ShowcaseUser> _userManager;
+        private Player CurrentPlayer; 
 
         public GameHub(GameManager manager, UserManager<ShowcaseUser> userManager)
         {
@@ -23,26 +24,25 @@ namespace Showcase.Hubs
         public async Task CreateGame()
         {
             var user = await _userManager.GetUserAsync(Context.User);
-            Player player1 = new Player(user.Id, 1);
-            _gameManager.CreateGame(player1);
+            CurrentPlayer = new Player(user.Id);
+            _gameManager.CreateGame(CurrentPlayer);
 
-            // possibly add to a list of games?
+            await Clients.Others.SendAsync("gameCreated", _gameManager.Game.Id);
+            await Clients.Caller.SendAsync("startGame");
         }
 
-        public async Task JoinGame()
+        public async Task JoinGame(string gameId)
         {
             var user = await _userManager.GetUserAsync(Context.User);
-            Player player2 = new Player(user.Id, 2); 
-            _gameManager.JoinGame(player2);       
+            CurrentPlayer = new Player(user.Id);
+            _gameManager.JoinGame(gameId, CurrentPlayer);       
 
-            await Clients.Caller.SendAsync("playerConnected", player2.Id);
-
-            await Clients.AllExcept(Context.ConnectionId).SendAsync("playerConnected", user.Id);
+            await Clients.User(_gameManager.Game.Player1.Id).SendAsync("gameJoined", gameId, CurrentPlayer.Id);
         }
 
-        public async Task MakeMove(int row, int col, Player player)
+        public async Task MakeMove(int row, int col)
         {
-            _gameManager.MakeMove(row, col, player);
+            _gameManager.MakeMove(row, col, CurrentPlayer);
         }
 
         public async Task StartGame()
