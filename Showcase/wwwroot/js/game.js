@@ -1,9 +1,6 @@
 ﻿var gameModule = (function () {
     let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-    let currentPlayerSymbol;
-    let currentPlayerId;
-
     var gameBoard = [];
 
     connection.start().catch(function (err) {
@@ -11,9 +8,6 @@
     });
 
     document.getElementById("createGameButton").addEventListener("click", function () {
-        document.getElementById("createGameButton").style.display = "none";
-        document.getElementById("gameList").style.display = "none";
-
         connection.invoke("CreateGame").catch(function (err) {
             return console.error(err.toString());
         });
@@ -28,40 +22,20 @@
         console.log(`Player ${playerId} joined game with ID: ${gameId}`);
     });
 
-    connection.on("playerConnected", function (connectionId, symbol) {
-        console.log(`Player ${symbol} connected with ID: ${connectionId}`);
-
-        if (!currentPlayerId) {
-            currentPlayerId = connectionId;
-            currentPlayerSymbol = symbol;
-            console.log(`Starting player: ${currentPlayerId} met symbool ${currentPlayerSymbol}`);
-        }
-
-        playerSymbols[connectionId] = symbol;
-
-        if (gameBoard.length === 0) {
-            initializeBoard();
-        }
-
-        var notifications = document.getElementById("notifications");
-        notifications.innerHTML = `You are added to the game. Waiting for the next player.`;
-    });
-
     connection.on("startGame", function () {
-        startGame();
-    });
+        document.getElementById("createGameButton").style.display = "none";
+        document.getElementById("gameList").style.display = "none";
 
-    connection.on("updateCell", function (row, col, symbol) {
-        gameBoard[row][col] = symbol;
-        updateBoardUI();
-    });
-
-    function startGame() {
         console.log("Game started");
         initializeBoard();
         updateBoardUI();
-    }
- 
+    });
+
+    connection.on("updateCell", function (row, col, symbol) {
+        gameBoard[row][col] = symbol === 1 ? 'X' : 'O';
+        updateBoardUI();
+    });
+
     function createJoinButton(gameId) {
         var list = document.getElementById("availableGames");
         var joinButton = document.createElement("button");
@@ -78,15 +52,16 @@
         list.appendChild(listItem);
     }
 
+    function initializeBoard() {
+        gameBoard = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
+    }
+
     function updateBoardUI() {
         var board = document.getElementById("gameBoard");
-
-        if (!board) {
-            board = document.createElement("div");
-            board.id = "gameBoard";
-            document.body.appendChild(board);
-        }
-
         board.innerHTML = "";
 
         for (var i = 0; i < 3; i++) {
@@ -96,7 +71,7 @@
                 cell.dataset.row = i;
                 cell.dataset.col = j;
 
-                cell.textContent = gameBoard[i][j] || "";
+                cell.textContent = gameBoard[i][j];
 
                 cell.addEventListener("click", function () {
                     onCellClick(this);
@@ -109,26 +84,14 @@
         }
     }
 
-    function initializeBoard() {
-        gameBoard = [
-            ['', '', ''],
-            ['', '', ''],
-            ['', '', '']
-        ];
-    }
-
     function onCellClick(cell) {
         var row = parseInt(cell.dataset.row);
         var col = parseInt(cell.dataset.col);
         console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
 
-        var isStartingPlayer = currentPlayerId && playerSymbols[currentPlayerId] === currentPlayerSymbol;
-
-        if (gameBoard[row][col] === "" && isStartingPlayer) {
-            connection.invoke("MakeMove", row, col, currentPlayerSymbol).catch(function (err) {
-                return console.error(err.toString());
-            });
-        }
+        connection.invoke("MakeMove", row, col).catch(function (err) {
+            return console.error(err.toString());
+        });
     }
 
     function init() {

@@ -6,6 +6,7 @@ namespace Showcase.Models
     {
         [Key]
         public string Id { get; set; }
+        public string ClientId { get; set; }
         public int Symbol { get; set; }
 
         public Player(string id)

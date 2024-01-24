@@ -12,15 +12,15 @@ namespace Showcase.Models
     public enum GameState
     {
         WaitingForSecondPlayer,
-        Started,
+        IsInProgress,
         Finished
     }
 
     public enum GameResult
     {
         Draw,
-        Player1,
-        Player2
+        Player1Win,
+        Player2Win
     }
 
     public class TicTacToe
@@ -38,6 +38,7 @@ namespace Showcase.Models
             Id = Guid.NewGuid().ToString();
             Board = new int[3, 3];
             Player1 = startingPlayer;
+            Player1.Symbol = 1;
             GameState = GameState.WaitingForSecondPlayer;
         }
 
@@ -84,13 +85,20 @@ namespace Showcase.Models
             }
         }
 
+        private void StartGame()
+        {
+            GameState = GameState.IsInProgress;
+            Turn = Turn.Player1;
+        }
+
         public void JoinGame(string gameId, Player player2)
         {
             if (Id != gameId)
                 return;
 
             Player2 = player2;
-            GameState = GameState.Started;
+            Player2.Symbol = 2;
+            StartGame();
         }
 
         public void CheckGameState()
@@ -146,13 +154,13 @@ namespace Showcase.Models
         {
             if (player == 1)
             {
-                GameResult = GameResult.Player1;
+                GameResult = GameResult.Player1Win;
                 GameState = GameState.Finished;
             }
 
             if (player == 2)
             {
-                GameResult = GameResult.Player2;
+                GameResult = GameResult.Player2Win;
                 GameState = GameState.Finished;
             }
         }
