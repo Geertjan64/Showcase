@@ -1,4 +1,5 @@
-﻿using Showcase.Models;
+﻿using MimeKit.Cryptography;
+using Showcase.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +48,22 @@ namespace Showcase.Services
             Game.JoinGame(gameId, player);
         }
 
-        public void MakeMove(int row, int col, Player player)
+        public bool MakeMove(int row, int col, Player player)
         {
-            Game.MakeMove(row, col, player);
+            return Game.MakeMove(row, col, player);
         }
+
+        public bool CheckIfGameIsOver()
+        {
+            if (Game.GameState == GameState.Finished) return true;
+
+            return false;
+        }
+
+        public GameResult GetGameResult()
+        {
+            return Game.GameResult;
+        }
+        
     }
 }

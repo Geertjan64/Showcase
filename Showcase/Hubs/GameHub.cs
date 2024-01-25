@@ -45,10 +45,37 @@ namespace Showcase.Hubs
             var user = await _userManager.GetUserAsync(Context.User);
             var player = _gameManager.GetPlayer(user.Id);
             var opponent = _gameManager.ReturnOpponent(player.Id);
-            _gameManager.MakeMove(row, col, player);
 
-            await Clients.User(opponent.Id).SendAsync("updateCell", row, col, player.Symbol);
-            await Clients.Caller.SendAsync("updateCell", row, col, player.Symbol);
+            if (_gameManager.MakeMove(row, col, player))
+            {
+                await Clients.User(opponent.Id).SendAsync("updateCell", row, col, player.Symbol);
+                await Clients.Caller.SendAsync("updateCell", row, col, player.Symbol);
+            }
+
+            await CheckIfGameIsOver();
+        }
+
+        public async Task CheckIfGameIsOver()
+        {
+            if (_gameManager.CheckIfGameIsOver())
+            {
+                var user = await _userManager.GetUserAsync(Context.User);
+                var player = _gameManager.GetPlayer(user.Id);
+                var opponent = _gameManager.ReturnOpponent(player.Id);
+
+                await Clients.User(opponent.Id).SendAsync("gameOver", player.Id);
+                await Clients.Caller.SendAsync("gameOver", player.Id);
+            }
+        }
+
+        public async Task CheckWinner()
+        {
+            var user = await _userManager.GetUserAsync(Context.User);
+            var player = new Player(user.Id);
+            var result = _gameManager.GetGameResult().ToString();
+
+            await Clients.Others.SendAsync("gameOverMessage", result);
+            await Clients.Caller.SendAsync("gameOverMessage", result);
         }
     }
 }

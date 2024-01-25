@@ -31,6 +31,17 @@
         updateBoardUI();
     });
 
+    connection.on("GameOver", function () {
+        console.log("Game finished!");
+        connection.invoke("CheckWinner").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+
+    connection.on("gameOverMessage", function (message) {
+        console.log(message);
+    });
+
     connection.on("updateCell", function (row, col, symbol) {
         gameBoard[row][col] = symbol === 1 ? 'X' : 'O';
         updateBoardUI();
@@ -87,11 +98,14 @@
     function onCellClick(cell) {
         var row = parseInt(cell.dataset.row);
         var col = parseInt(cell.dataset.col);
-        console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
 
-        connection.invoke("MakeMove", row, col).catch(function (err) {
-            return console.error(err.toString());
-        });
+        if (gameBoard[row][col] == '') {
+            console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
+
+            connection.invoke("MakeMove", row, col).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
     }
 
     function init() {

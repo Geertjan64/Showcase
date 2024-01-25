@@ -130,7 +130,7 @@ namespace Showcase.Models
                 return;
             }
 
-            // Controleer of het bord volledig is gevuld
+            // Check if board is full
             bool isBoardFull = true;
             for (int i = 0; i < 3; i++)
             {
