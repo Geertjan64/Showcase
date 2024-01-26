@@ -1,7 +1,9 @@
 ﻿var gameModule = (function () {
     let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-    var gameBoard = [];
+    let gameBoard = [];
+    let gameFinished;
+
 
     connection.start().catch(function (err) {
         return console.error(err.toString());
@@ -33,6 +35,7 @@
 
     connection.on("GameOver", function () {
         console.log("Game finished!");
+        gameFinished = true;
         connection.invoke("CheckWinner").catch(function (err) {
             return console.error(err.toString());
         });
@@ -40,6 +43,7 @@
 
     connection.on("gameOverMessage", function (message) {
         console.log(message);
+        displayGameMessage(message);
     });
 
     connection.on("updateCell", function (row, col, symbol) {
@@ -99,13 +103,20 @@
         var row = parseInt(cell.dataset.row);
         var col = parseInt(cell.dataset.col);
 
-        if (gameBoard[row][col] == '') {
+        if (gameBoard[row][col] == '' && !gameFinished) {
             console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
 
             connection.invoke("MakeMove", row, col).catch(function (err) {
                 return console.error(err.toString());
             });
         }
+        else 
+    }
+
+    function displayGameMessage(message) {
+        var gameMessageElement = document.getElementById("notifications");
+        gameMessageElement.textContent = message;
+        gameMessageElement.style.display = "block";
     }
 
     function init() {

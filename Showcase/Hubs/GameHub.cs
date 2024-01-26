@@ -70,8 +70,6 @@ namespace Showcase.Hubs
 
         public async Task CheckWinner()
         {
-            var user = await _userManager.GetUserAsync(Context.User);
-            var player = new Player(user.Id);
             var result = _gameManager.GetGameResult().ToString();
 
             await Clients.Others.SendAsync("gameOverMessage", result);
