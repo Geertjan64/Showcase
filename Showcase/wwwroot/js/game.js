@@ -110,7 +110,6 @@
                 return console.error(err.toString());
             });
         }
-        else 
     }
 
     function displayGameMessage(message) {
