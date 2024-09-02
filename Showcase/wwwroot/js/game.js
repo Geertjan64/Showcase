@@ -10,6 +10,7 @@
     });
 
     document.getElementById("createGameButton").addEventListener("click", function () {
+        console.log("Create game button clicked")
         connection.invoke("CreateGame").catch(function (err) {
             return console.error(err.toString());
         });
