@@ -6,18 +6,21 @@ using Showcase.Services;
 using System.Threading.Tasks;
 using Showcase.Models;
 using System.Numerics;
+using Showcase.Data;
 
 namespace Showcase.Hubs
 {
     public class GameHub : Hub
     {
         private readonly GameManager _gameManager;
-        private readonly UserManager<ShowcaseUser> _userManager; 
+        private readonly UserManager<ShowcaseUser> _userManager;
+        private readonly GameDbContext _gameDbContext;
 
-        public GameHub(GameManager manager, UserManager<ShowcaseUser> userManager)
+        public GameHub(GameManager manager, UserManager<ShowcaseUser> userManager, GameDbContext gameDbContext)
         {
             _gameManager = manager;
             _userManager = userManager;
+            _gameDbContext = gameDbContext;
         }
 
         public async Task CreateGame()
@@ -62,6 +65,18 @@ namespace Showcase.Hubs
                 var user = await _userManager.GetUserAsync(Context.User);
                 var player = _gameManager.GetPlayer(user.Id);
                 var opponent = _gameManager.ReturnOpponent(player.Id);
+
+                //var gameResult = new GameResultRecord
+                //{
+                    //GameId = _gameManager.Game.Id,
+                    //Player1Id = _gameManager.Game.Player1.Id,
+                    //Player2Id = _gameManager.Game.Player2?.Id,
+                    //Result = _gameManager.Game.GameResult,
+                    //DatePlayed = DateTime.UtcNow
+                //};
+
+                //_gameDbContext.GameResults.Add(gameResult);
+                //await _gameDbContext.SaveChangesAsync();
 
                 await Clients.User(opponent.Id).SendAsync("gameOver", player.Id);
                 await Clients.Caller.SendAsync("gameOver", player.Id);
