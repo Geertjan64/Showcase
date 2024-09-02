@@ -44,6 +44,7 @@
 
     connection.on("gameOverMessage", function (message) {
         console.log(message);
+        document.getElementById("backToLobbyButton").style.display = "block";
         displayGameMessage(message);
     });
 
