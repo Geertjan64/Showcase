@@ -66,18 +66,6 @@ namespace Showcase.Hubs
                 var player = _gameManager.GetPlayer(user.Id);
                 var opponent = _gameManager.ReturnOpponent(player.Id);
 
-                //var gameResult = new GameResultRecord
-                //{
-                    //GameId = _gameManager.Game.Id,
-                    //Player1Id = _gameManager.Game.Player1.Id,
-                    //Player2Id = _gameManager.Game.Player2?.Id,
-                    //Result = _gameManager.Game.GameResult,
-                    //DatePlayed = DateTime.UtcNow
-                //};
-
-                //_gameDbContext.GameResults.Add(gameResult);
-                //await _gameDbContext.SaveChangesAsync();
-
                 await Clients.User(opponent.Id).SendAsync("gameOver", player.Id);
                 await Clients.Caller.SendAsync("gameOver", player.Id);
             }
