@@ -15,13 +15,13 @@ namespace Showcase.Migrations.GameDb
                 name: "GameResults",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Player1Id = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Player2Id = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Result = table.Column<int>(type: "int", nullable: false),
-                    DatePlayed = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GameId = table.Column<string>(type: "TEXT", nullable: false),
+                    Player1Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Player2Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Result = table.Column<int>(type: "INTEGER", nullable: false),
+                    DatePlayed = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

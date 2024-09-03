@@ -16,7 +16,7 @@ builder.Services.AddDbContext<ShowcaseContext>(options =>
     options.UseSqlite(connectionString));
 
 builder.Services.AddDbContext<GameDbContext>(options =>
-        options.UseSqlServer(connectionStringGame));
+        options.UseSqlite(connectionStringGame));
 
 builder.Services.AddDefaultIdentity<ShowcaseUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()

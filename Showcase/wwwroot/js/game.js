@@ -40,6 +40,9 @@
         connection.invoke("CheckWinner").catch(function (err) {
             return console.error(err.toString());
         });
+        connection.invoke("SaveGame").catch(function (err) {
+            return console.error(err .toString());
+        });
     });
 
     connection.on("gameOverMessage", function (message) {
