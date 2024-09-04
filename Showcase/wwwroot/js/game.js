@@ -11,6 +11,11 @@
 
     document.getElementById("createGameButton").addEventListener("click", function () {
         console.log("Create game button clicked")
+        document.getElementById("gameBoard").style.display = "";
+        initializeBoard();
+        updateBoardUI();
+        
+
         connection.invoke("CreateGame").catch(function (err) {
             return console.error(err.toString());
         });
@@ -28,6 +33,7 @@
     connection.on("startGame", function () {
         document.getElementById("createGameButton").style.display = "none";
         document.getElementById("gameList").style.display = "none";
+        document.getElementById("gameBoard").style.display = "";
 
         console.log("Game started");
         initializeBoard();
@@ -122,6 +128,19 @@
         gameMessageElement.textContent = message;
         gameMessageElement.style.display = "block";
     }
+
+    document.getElementById("backToLobbyButton").addEventListener("click", function () {
+        document.getElementById("notifications").style.display = "none";
+        document.getElementById("gameBoard").style.display = "none";
+        document.getElementById("createGameButton").style.display = "block";
+        document.getElementById("gameList").style.display = "block";
+        document.getElementById("backToLobbyButton").style.display = "none";
+        gameBoard = [];
+        gameFinished = false;
+        connection.invoke("ResetGame").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
 
     function init() {
         document.addEventListener("DOMContentLoaded", () => {

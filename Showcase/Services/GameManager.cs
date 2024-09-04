@@ -64,6 +64,11 @@ namespace Showcase.Services
         {
             return Game.GameResult;
         }
+
+        public void ResetGame()
+        {
+            Game = null;
+        }
         
     }
 }

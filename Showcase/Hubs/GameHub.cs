@@ -100,5 +100,12 @@ namespace Showcase.Hubs
             await Clients.User(opponent.Id).SendAsync("gameSaved", player.Id);
             await Clients.Caller.SendAsync("gameSaved", player.Id);
         }
+
+        public async Task ResetGame()
+        {
+            _gameManager.ResetGame();
+            await Clients.Others.SendAsync("gameReset");
+            await Clients.Caller.SendAsync("gameReset");
+        }
     }
 }

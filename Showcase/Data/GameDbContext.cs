@@ -15,9 +15,8 @@ namespace Showcase.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<GameResultRecord>()
-                .HasIndex(g => g.GameId)
-                .IsUnique();
-
+                .HasIndex(e => e.GameId)
+                .IsUnique(false);
             base.OnModelCreating(modelBuilder);
         }
     }
