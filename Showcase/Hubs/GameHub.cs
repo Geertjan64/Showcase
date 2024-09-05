@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Showcase.Models;
 using System.Numerics;
 using Showcase.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Showcase.Hubs
 {
@@ -119,6 +120,27 @@ namespace Showcase.Hubs
             _gameManager.ResetGame();
             await Clients.Others.SendAsync("gameReset");
             await Clients.Caller.SendAsync("gameReset");
+        }
+
+        public async Task GetGamesByUser()
+        {
+            var user = await _userManager.GetUserAsync(Context.User);
+            var player = _gameManager.GetPlayer(user.Id);
+            var opponent = _gameManager.ReturnOpponent(player.Id);
+
+            var playerGames = await _gameDbContext.GameResults
+                .Where(game => game.Player1Id == player.Id || game.Player2Id == player.Id)
+                .ToListAsync();
+
+            var opponentGames = await _gameDbContext.GameResults
+                .Where(game => game.Player1Id == opponent.Id || game.Player2Id == opponent.Id)
+                .ToListAsync();
+
+            // Stuur de games naar de huidige speler
+            await Clients.Caller.SendAsync("receiveGames", playerGames);
+
+            // Stuur de games naar de tegenstander
+            await Clients.User(opponent.Id).SendAsync("receiveGames", opponentGames);
         }
     }
 }

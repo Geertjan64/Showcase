@@ -36,6 +36,7 @@
         document.getElementById("gameBoard").style.display = "";
 
         console.log("Game started");
+        loadGames();
         initializeBoard();
         updateBoardUI();
     });
@@ -67,7 +68,14 @@
         var joinButton = document.createElement("button");
         joinButton.textContent = "Join game " + gameId;
         joinButton.id = gameId;
+
+        // Voeg een click event listener toe
         joinButton.addEventListener("click", function () {
+            // Verwijder de lijstregel zodra erop wordt geklikt
+            var listItem = joinButton.parentElement;
+            list.removeChild(listItem);
+
+            // Probeer de game te joinen via de server
             connection.invoke("JoinGame", gameId).catch(function (err) {
                 return console.error(err.toString());
             });
@@ -76,6 +84,24 @@
         var listItem = document.createElement("li");
         listItem.appendChild(joinButton);
         list.appendChild(listItem);
+    }
+
+    function loadGames() {
+        connection.on("receiveGames", function (games) {
+            var list = document.getElementById("gameHistoryList");
+            list.innerHTML = ""; // Maak de lijst leeg voordat je nieuwe items toevoegt
+
+            games.forEach(function (game) {
+                var listItem = document.createElement("li");
+                listItem.textContent = "Game ID: " + game.gameId; // Pas aan op basis van je model
+
+                list.appendChild(listItem);
+            });
+        });
+        connection.invoke("GetGamesByUser").catch(function (err) {
+            return console.error(err.toString());
+        });
+
     }
 
     function initializeBoard() {
