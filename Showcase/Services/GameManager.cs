@@ -60,6 +60,13 @@ namespace Showcase.Services
             return false;
         }
 
+        public bool CheckIfGameIsInProgress()
+        {
+            if (Game.GameState == GameState.IsInProgress) return true;
+
+            return false;
+        }
+
         public GameResult GetGameResult()
         {
             return Game.GameResult;
@@ -69,6 +76,7 @@ namespace Showcase.Services
         {
             Game = null;
         }
+
         
     }
 }

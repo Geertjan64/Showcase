@@ -71,6 +71,19 @@ namespace Showcase.Hubs
             }
         }
 
+        public async Task CheckIfGameIsInProgress()
+        {
+            if (_gameManager.CheckIfGameIsInProgress())
+            {
+                var user = await _userManager.GetUserAsync(Context.User);
+                var player = _gameManager.GetPlayer(user.Id);
+                var opponent = _gameManager.ReturnOpponent(player.Id);
+
+                await Clients.User(opponent.Id).SendAsync("removeJoinGame", player.Id);
+                await Clients.Caller.SendAsync("removeJoinGame", player.Id);
+            }
+        }
+
         public async Task CheckWinner()
         {
             var result = _gameManager.GetGameResult().ToString();
