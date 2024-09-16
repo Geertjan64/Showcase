@@ -121,25 +121,49 @@ namespace Showcase.Hubs
             await Clients.Others.SendAsync("gameReset");
             await Clients.Caller.SendAsync("gameReset");
         }
+
         public async Task GetGamesByUser()
         {
+            // Haal de ingelogde gebruiker op
             var user = await _userManager.GetUserAsync(Context.User);
+
+            // Haal de speler op op basis van de ingelogde gebruiker
             var player = _gameManager.GetPlayer(user.Id);
+            if (player == null)
+            {
+                // Als de speler niet gevonden is, stuur een lege lijst naar de client
+                await Clients.Caller.SendAsync("receiveGames", new List<GameResult>());
+                return;
+            }
+
+            // Haal de tegenstander op, kan null zijn als er geen spel bezig is
             var opponent = _gameManager.ReturnOpponent(player.Id);
 
+            // Haal de games van de speler op
             var playerGames = await _gameDbContext.GameResults
                 .Where(game => game.Player1Id == player.Id || game.Player2Id == player.Id)
                 .Distinct()
                 .ToListAsync();
 
-            var opponentGames = await _gameDbContext.GameResults
-                .Where(game => game.Player1Id == opponent.Id || game.Player2Id == opponent.Id)
-                .Distinct()
-                .ToListAsync();
+            // Als er een tegenstander is, haal ook de games van de tegenstander op
+            var opponentGames = new List<GameResultRecord>();
+            if (opponent != null)
+            {
+                opponentGames = await _gameDbContext.GameResults
+                    .Where(game => game.Player1Id == opponent.Id || game.Player2Id == opponent.Id)
+                    .Distinct()
+                    .ToListAsync();
+            }
 
+            // Stuur de games naar de huidige speler
             await Clients.Caller.SendAsync("receiveGames", playerGames);
 
-            await Clients.User(opponent.Id).SendAsync("receiveGames", opponentGames);
+            // Stuur de games naar de tegenstander, als er een tegenstander is
+            if (opponent != null)
+            {
+                await Clients.User(opponent.Id).SendAsync("receiveGames", opponentGames);
+            }
         }
+
     }
 }

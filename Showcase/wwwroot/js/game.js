@@ -1,6 +1,5 @@
 ﻿var gameModule = (function () {
     let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
-
     let gameBoard = [];
     let gameFinished;
 
@@ -36,7 +35,6 @@
         document.getElementById("gameBoard").style.display = "";
 
         console.log("Game started");
-        loadGames();
         initializeBoard();
         updateBoardUI();
     });
@@ -50,6 +48,14 @@
         connection.invoke("SaveGame").catch(function (err) {
             return console.error(err .toString());
         });
+
+        document.getElementById("gameHistoryButton").style.display = "block";
+    });
+
+    // Toevoegen van click event listener aan de "Spelhistorie" knop
+    document.getElementById("gameHistoryButton").addEventListener("click", function () {
+        loadGames(); // Laad de spellen wanneer er op de knop wordt geklikt
+        document.getElementById("gameHistoryList").style.display = "block"; // Toon de game history list
     });
 
     connection.on("gameOverMessage", function (message) {
@@ -91,17 +97,23 @@
             var list = document.getElementById("gameHistoryList");
             list.innerHTML = ""; // Maak de lijst leeg voordat je nieuwe items toevoegt
 
-            games.forEach(function (game) {
-                var listItem = document.createElement("li");
-                listItem.textContent = "Game ID: " + game.gameId; // Pas aan op basis van je model
+            if (games.length === 0) {
+                var noGamesMessage = document.createElement("li");
+                noGamesMessage.textContent = "No games found.";
+                list.appendChild(noGamesMessage);
+            } else {
+                games.forEach(function (game) {
+                    var listItem = document.createElement("li");
+                    listItem.textContent = "Game ID: " + game.gameId; // Pas aan op basis van je model
 
-                list.appendChild(listItem);
-            });
+                    list.appendChild(listItem);
+                });
+            }
         });
+
         connection.invoke("GetGamesByUser").catch(function (err) {
             return console.error(err.toString());
         });
-
     }
 
     function initializeBoard() {
@@ -161,6 +173,8 @@
         document.getElementById("createGameButton").style.display = "block";
         document.getElementById("gameList").style.display = "block";
         document.getElementById("backToLobbyButton").style.display = "none";
+        document.getElementById("gameHistoryList").style.display = "none";
+        document.getElementById("gameHistoryButton").style.display = "none"
         gameBoard = [];
         gameFinished = false;
         connection.invoke("ResetGame").catch(function (err) {
