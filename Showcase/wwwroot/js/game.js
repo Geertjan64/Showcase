@@ -164,6 +164,7 @@
         gameBoard = [];
         gameFinished = false;
         connection.invoke("ResetGame").catch(function (err) {
+            loadGames();
             return console.error(err.toString());
         });
     });

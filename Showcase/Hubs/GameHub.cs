@@ -121,7 +121,6 @@ namespace Showcase.Hubs
             await Clients.Others.SendAsync("gameReset");
             await Clients.Caller.SendAsync("gameReset");
         }
-
         public async Task GetGamesByUser()
         {
             var user = await _userManager.GetUserAsync(Context.User);
@@ -130,16 +129,16 @@ namespace Showcase.Hubs
 
             var playerGames = await _gameDbContext.GameResults
                 .Where(game => game.Player1Id == player.Id || game.Player2Id == player.Id)
+                .Distinct()
                 .ToListAsync();
 
             var opponentGames = await _gameDbContext.GameResults
                 .Where(game => game.Player1Id == opponent.Id || game.Player2Id == opponent.Id)
+                .Distinct()
                 .ToListAsync();
 
-            // Stuur de games naar de huidige speler
             await Clients.Caller.SendAsync("receiveGames", playerGames);
 
-            // Stuur de games naar de tegenstander
             await Clients.User(opponent.Id).SendAsync("receiveGames", opponentGames);
         }
     }
