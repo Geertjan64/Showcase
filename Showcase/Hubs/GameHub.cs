@@ -99,21 +99,37 @@ namespace Showcase.Hubs
             var player = _gameManager.GetPlayer(user.Id);
             var opponent = _gameManager.ReturnOpponent(player.Id);
 
-            var gameResult = new GameResultRecord
+            using (var transaction = await _gameDbContext.Database.BeginTransactionAsync())
             {
-                GameId = _gameManager.Game.Id,
-                Player1Id = _gameManager.Game.Player1.Id,
-                Player2Id = _gameManager.Game.Player2.Id,
-                Result = _gameManager.Game.GameResult,
-                DatePlayed = DateTime.UtcNow
-            };
+                var bestaandeGimma = await _gameDbContext.GameResults
+                    .FirstOrDefaultAsync(gr => gr.GameId == _gameManager.Game.Id);
 
-            _gameDbContext.GameResults.Add(gameResult);
-            await _gameDbContext.SaveChangesAsync();
+                if (bestaandeGimma == null)
+                {
+                    var gameResult = new GameResultRecord
+                    {
+                        GameId = _gameManager.Game.Id,
+                        Player1Id = _gameManager.Game.Player1.Id,
+                        Player2Id = _gameManager.Game.Player2.Id,
+                        Result = _gameManager.Game.GameResult,
+                        DatePlayed = DateTime.UtcNow
+                    };
 
+                    _gameDbContext.GameResults.Add(gameResult);
+                    await _gameDbContext.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                }
+                else
+                {
+                    Console.WriteLine($"Game already exists: {_gameManager.Game.Id}");
+                }
+            }
             await Clients.User(opponent.Id).SendAsync("gameSaved", player.Id);
             await Clients.Caller.SendAsync("gameSaved", player.Id);
         }
+
+
 
         public async Task ResetGame()
         {
