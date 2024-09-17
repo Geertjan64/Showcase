@@ -1,20 +1,29 @@
-﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+﻿@model IEnumerable<UserWithGamesViewModel>
 
-<h2>Geregistreerde Gebruikers</h2>
+<h2>Registered Users and Played Games</h2>
 
-<table class="table">
+<table>
     <thead>
         <tr>
+            <th>Username</th>
             <th>Email</th>
-            <th>Gebruikersnaam</th>
+            <th>Games Played</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var user in Model)
         {
             <tr>
-                <td>@user.Email</td>
                 <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <ul>
+                        @foreach (var game in user.PlayedGames)
+                        {
+                            <li>Game ID: @game.GameId, Result: @game.Result, Date: @game.DatePlayed</li>
+                        }
+                    </ul>
+                </td>
             </tr>
         }
     </tbody>
