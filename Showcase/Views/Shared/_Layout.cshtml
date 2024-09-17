@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="~/Showcase.styles.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.getJSON('@Url.Action("CheckIfAdmin", "User")', function (data) {
+                if (data.isAdmin) {
+                    $('#admin-nav').show();
+                } else {
+                    $('#admin-nav').hide();
+                }
+            });
+        });
+    </script>
 </head>
 <partial name="_CookieConsentPartial" />
 <body>
@@ -27,6 +38,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="Game">Boter Kaas en Eieren</a>
+                        </li>
+                        <li class="nav-item" id="admin-nav" style="display: none;">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="ListUsers">Beheer Gebruikers</a>
                         </li>
                     </ul>
                 </div>

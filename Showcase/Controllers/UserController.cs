@@ -19,7 +19,6 @@ public class UserController : Controller
         _gameDbContext = gameDbContext;
     }
 
-    // Methode om alle geregistreerde gebruikers op te halen
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ListUsers()
     {
@@ -38,5 +37,16 @@ public class UserController : Controller
         return View(userWithGames);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> CheckIfAdmin()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+        {
+            return Json(new { isAdmin = true });
+        }
+
+        return Json(new { isAdmin = false });
+    }
 
 }
