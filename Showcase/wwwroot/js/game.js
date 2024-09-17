@@ -52,10 +52,9 @@
         document.getElementById("gameHistoryButton").style.display = "block";
     });
 
-    // Toevoegen van click event listener aan de "Spelhistorie" knop
     document.getElementById("gameHistoryButton").addEventListener("click", function () {
-        loadGames(); // Laad de spellen wanneer er op de knop wordt geklikt
-        document.getElementById("gameHistoryList").style.display = "block"; // Toon de game history list
+        loadGames();
+        document.getElementById("gameHistoryList").style.display = "block";
     });
 
     connection.on("gameOverMessage", function (message) {
@@ -75,13 +74,10 @@
         joinButton.textContent = "Join game " + gameId;
         joinButton.id = gameId;
 
-        // Voeg een click event listener toe
         joinButton.addEventListener("click", function () {
-            // Verwijder de lijstregel zodra erop wordt geklikt
             var listItem = joinButton.parentElement;
             list.removeChild(listItem);
 
-            // Probeer de game te joinen via de server
             connection.invoke("JoinGame", gameId).catch(function (err) {
                 return console.error(err.toString());
             });
@@ -95,7 +91,7 @@
     function loadGames() {
         connection.on("receiveGames", function (games) {
             var list = document.getElementById("gameHistoryList");
-            list.innerHTML = ""; // Maak de lijst leeg voordat je nieuwe items toevoegt
+            list.innerHTML = "";
 
             if (games.length === 0) {
                 var noGamesMessage = document.createElement("li");
@@ -104,7 +100,7 @@
             } else {
                 games.forEach(function (game) {
                     var listItem = document.createElement("li");
-                    listItem.textContent = "Game ID: " + game.gameId; // Pas aan op basis van je model
+                    listItem.textContent = "Game ID: " + game.gameId;
 
                     list.appendChild(listItem);
                 });
