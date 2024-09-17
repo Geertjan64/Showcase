@@ -173,5 +173,26 @@ namespace Showcase.Hubs
             }
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var user = await _userManager.GetUserAsync(Context.User);
+            var player = _gameManager.GetPlayer(user.Id);
+
+            if (player != null)
+            {
+
+                var opponent = _gameManager.ReturnOpponent(player.Id);
+
+                if (opponent != null)
+                {
+                    await Clients.User(opponent.Id).SendAsync("playerDisconnected", player.Id);
+                }
+
+                ResetGame();
+            }
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
     }
 }

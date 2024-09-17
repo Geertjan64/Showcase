@@ -8,6 +8,17 @@
         return console.error(err.toString());
     });
 
+    connection.on("playerDisconnected", function (playerId) {
+        console.log(`Player ${playerId} has disconnected.`);
+        document.getElementById("notifications").textContent = `Player ${playerId} has disconnected. The game will be reset.`;
+        document.getElementById("notifications").style.display = "block";
+        document.getElementById("backToLobbyButton").style.display = "block";
+
+        connection.invoke("ResetGame").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+
     document.getElementById("createGameButton").addEventListener("click", function () {
         console.log("Create game button clicked")
         document.getElementById("gameBoard").style.display = "";
