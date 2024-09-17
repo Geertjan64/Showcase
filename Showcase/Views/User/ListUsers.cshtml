@@ -5,9 +5,9 @@
 <table>
     <thead>
         <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Games Played</th>
+            <th>Gebruikersnaam</th>
+            <th>E-mailadres</th>
+            <th>Gespeelde spellen</th>
         </tr>
     </thead>
     <tbody>
@@ -17,14 +17,45 @@
                 <td>@user.UserName</td>
                 <td>@user.Email</td>
                 <td>
-                    <ul>
-                        @foreach (var game in user.PlayedGames)
-                        {
-                            <li>Game ID: @game.GameId, Result: @game.Result, Date: @game.DatePlayed</li>
-                        }
-                    </ul>
+                    <button class="expand-btn" data-target="#games-@user.UserId">Show Games</button>
+                    <div id="games-@user.UserId" class="games-list" style="display: none;">
+                        <ul>
+                            @foreach (var game in user.PlayedGames)
+                            {
+                                <li>Spel ID: @game.GameId, Winnaar: @game.Result, Datum: @game.DatePlayed</li>
+                            }
+                        </ul>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.expand-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const target = document.querySelector(button.getAttribute('data-target'));
+                if (target.style.display === 'none') {
+                    target.style.display = 'block';
+                    button.textContent = 'Spellen Verbergen';
+                } else {
+                    target.style.display = 'none';
+                    button.textContent = 'Spellen Weergeven';
+                }
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .games-list {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+}
