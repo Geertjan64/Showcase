@@ -142,36 +142,20 @@ namespace Showcase.Hubs
         {
             var user = await _userManager.GetUserAsync(Context.User);
 
-            var player = _gameManager.GetPlayer(user.Id);
-            if (player == null)
+            if (user == null)
             {
                 await Clients.Caller.SendAsync("receiveGames", new List<GameResult>());
                 return;
             }
 
-            var opponent = _gameManager.ReturnOpponent(player.Id);
-
-            var playerGames = await _gameDbContext.GameResults
-                .Where(game => game.Player1Id == player.Id || game.Player2Id == player.Id)
+            var userGames = await _gameDbContext.GameResults
+                .Where(game => game.Player1Id == user.Id || game.Player2Id == user.Id)
                 .Distinct()
                 .ToListAsync();
 
-            var opponentGames = new List<GameResultRecord>();
-            if (opponent != null)
-            {
-                opponentGames = await _gameDbContext.GameResults
-                    .Where(game => game.Player1Id == opponent.Id || game.Player2Id == opponent.Id)
-                    .Distinct()
-                    .ToListAsync();
-            }
-
-            await Clients.Caller.SendAsync("receiveGames", playerGames);
-
-            if (opponent != null)
-            {
-                await Clients.User(opponent.Id).SendAsync("receiveGames", opponentGames);
-            }
+            await Clients.Caller.SendAsync("receiveGames", userGames);
         }
+
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
