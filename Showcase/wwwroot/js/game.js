@@ -10,7 +10,7 @@
 
     connection.on("playerDisconnected", function (playerId) {
         console.log(`Player ${playerId} has disconnected.`);
-        document.getElementById("notifications").textContent = `Player ${playerId} has disconnected. The game will be reset.`;
+        document.getElementById("notifications").textContent = `Speler: ${playerId} heeft het spel verlaten :( )`;
         document.getElementById("notifications").style.display = "block";
         document.getElementById("backToLobbyButton").style.display = "block";
 

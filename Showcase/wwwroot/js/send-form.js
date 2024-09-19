@@ -10,8 +10,8 @@
             success: function (data) {
                 if (data.success) {
                     alert(data.message);
-                    form[0].reset(); // Leeg het formulier
-                    form.validate().resetForm(); // Reset de validatiestatus
+                    form[0].reset();
+                    form.validate().resetForm();
                 } else {
                     alert("Er is een fout opgetreden: " + data.message);
                 }

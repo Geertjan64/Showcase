@@ -17,7 +17,7 @@
                 <td>@user.UserName</td>
                 <td>@user.Email</td>
                 <td>
-                    <button class="expand-btn" data-target="#games-@user.UserId">Show Games</button>
+                    <button class="expand-btn" data-target="#games-@user.UserId">Spellen Weergeven</button>
                     <div id="games-@user.UserId" class="games-list" style="display: none;">
                         <ul>
                             @foreach (var game in user.PlayedGames)
