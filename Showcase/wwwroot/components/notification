@@ -1,0 +1,39 @@
+class Notification extends HTMLElement {
+  constructor() {
+    super();
+    // Attach a shadow DOM to encapsulate styles
+    this.attachShadow({ mode: "open" });
+  }
+
+  // Called when the component is added to the DOM
+  connectedCallback() {
+    this.render();
+  }
+
+  // Attributes the component will observe
+  static get observedAttributes() {
+    return "text";
+  }
+
+  // When attributes change, update the component
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(`Attribute ${name} has changed.`);
+    if (oldValue !== newValue) {
+      this.render();
+    }
+  }
+
+  // Render the notification UI
+  render() {
+    const text = this.getAttribute("text") || "Notification text"; // This is default text
+
+    this.shadowRoot.innerHTML = `
+      <div id="notifications">
+        <span>${text}</span>
+      </div>
+    `;
+  }
+}
+
+// Define the custom element
+customElements.define("Notification", Notification);

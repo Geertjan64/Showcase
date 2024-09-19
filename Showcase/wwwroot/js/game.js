@@ -10,9 +10,13 @@
 
     connection.on("playerDisconnected", function (playerId) {
         console.log(`Player ${playerId} has disconnected.`);
-        document.getElementById("notifications").textContent = `Speler: ${playerId} heeft het spel verlaten :( )`;
-        document.getElementById("notifications").style.display = "block";
-        document.getElementById("backToLobbyButton").style.display = "block";
+        // This is the new component which we append to the notifications div
+        document.getElementById("notifications").appendChild(Notification("Speler: " + playerId + " heeft het spel verlaten :( )"));
+
+        // Old version
+        // document.getElementById("notifications").textContent = `Speler: ${playerId} heeft het spel verlaten :( )`;
+        // document.getElementById("notifications").style.display = "block";
+        // document.getElementById("backToLobbyButton").style.display = "block";
 
         connection.invoke("ResetGame").catch(function (err) {
             return console.error(err.toString());
