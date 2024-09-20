@@ -27,7 +27,7 @@ namespace Showcase.Hubs
         public async Task CreateGame()
         {
             var user = await _userManager.GetUserAsync(Context.User);
-            var player = new Player(user.Id);
+            var player = new Player(user.Id, user.FirstName, user.LastName, user.NormalizedEmail);
             _gameManager.CreateGame(player);
 
             await Clients.Others.SendAsync("gameCreated", _gameManager.Game.Id);
@@ -37,7 +37,7 @@ namespace Showcase.Hubs
         public async Task JoinGame(string gameId)
         {
             var user = await _userManager.GetUserAsync(Context.User);
-            var player = new Player(user.Id);
+            var player = new Player(user.Id, user.FirstName, user.LastName, user.NormalizedEmail);
             _gameManager.JoinGame(gameId, player);       
 
             await Clients.User(_gameManager.Game.Player1.Id).SendAsync("gameJoined", gameId, player.Id);
@@ -87,7 +87,7 @@ namespace Showcase.Hubs
 
         public async Task CheckWinner()
         {
-            var result = _gameManager.GetGameResult().ToString();
+            var result = _gameManager.GetResult();
 
             await Clients.Others.SendAsync("gameOverMessage", result);
             await Clients.Caller.SendAsync("gameOverMessage", result);

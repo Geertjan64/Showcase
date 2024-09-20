@@ -73,6 +73,11 @@ namespace Showcase.Services
             return Game.GameResult;
         }
 
+        public string GetResult()
+        {
+            return Game.GetResult();
+        }
+
         public void ResetGame()
         {
             Game = null;

@@ -1,4 +1,4 @@
-﻿import { GameNotifications } from './gameNotifications.js';
+﻿import { GameNotifications } from './game-notifications.js';
 var gameModule = (function () {
     let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
     let gameBoard = [];
@@ -19,7 +19,6 @@ var gameModule = (function () {
     });
 
     document.getElementById("createGameButton").addEventListener("click", function () {
-        console.log("Create game button clicked")
         document.getElementById("gameBoard").style.display = "";
         initializeBoard();
         updateBoardUI();

@@ -164,5 +164,25 @@ namespace Showcase.Models
                 GameState = GameState.Finished;
             }
         }
+
+        public string GetResult()
+        {
+            if (GameState == GameState.Finished)
+            {
+                switch (GameResult)
+                {
+                    case GameResult.Player1Win:
+                        return $"{Player1.FirstName} heeft gewonnen!";
+                    case GameResult.Player2Win:
+                        return $"{Player2.FirstName} heeft gewonnen!";
+                    case GameResult.Draw:
+                        return "Het spel is gelijkspel!";
+                    default:
+                        return "Onbekende uitkomst.";
+                }
+            }
+
+            return "Het spel is nog niet afgelopen.";
+        }
     }
 }
