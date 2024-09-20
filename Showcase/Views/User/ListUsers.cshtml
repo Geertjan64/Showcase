@@ -22,7 +22,11 @@
                         <ul>
                             @foreach (var game in user.PlayedGames)
                             {
-                                <li>Spel ID: @game.GameId, Winnaar: @game.Result, Datum: @game.DatePlayed</li>
+                                <li>
+                                    Spel ID: @game.GameId,
+                                    Winnaar: @(game.Result.ToString() == "Player1Win" ? game.Player1Id : game.Result.ToString() == "Player2Win" ? game.Player2Id : "Gelijkspel"),
+                                    Datum: @game.DatePlayed.ToString("dd-MM-yyyy")
+                                </li>
                             }
                         </ul>
                     </div>
@@ -31,7 +35,6 @@
         }
     </tbody>
 </table>
-
 @section Scripts {
     <script>
         document.querySelectorAll('.expand-btn').forEach(button => {

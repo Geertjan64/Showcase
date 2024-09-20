@@ -30,9 +30,19 @@ public class UserController : Controller
             UserName = user.UserName,
             Email = user.Email,
             PlayedGames = _gameDbContext.GameResults
-                .Where(gr => gr.Player1Id == user.Id || gr.Player2Id == user.Id)
-                .ToList()
+               .Where(gr => gr.Player1Id == user.Id || gr.Player2Id == user.Id)
+               .Select(gr => new GameResultRecord
+               {
+                   GameId = gr.GameId,
+                   Player1Id = gr.Player1Id,
+                   Player2Id = gr.Player2Id,
+                   Result = gr.Result,
+                   DatePlayed = gr.DatePlayed
+               })
+               .ToList()
         }).ToList();
+
+
 
         return View(userWithGames);
     }
