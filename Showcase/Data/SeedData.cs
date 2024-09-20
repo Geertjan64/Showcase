@@ -9,7 +9,7 @@ public class SeedData
         var userManager = serviceProvider.GetRequiredService<UserManager<ShowcaseUser>>();
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        string adminEmail = "admin@gmail.commm";
+        string adminEmail = "admin@admin.nl";
         string adminPassword = "Admin123!";
 
         if (!await roleManager.RoleExistsAsync("Admin"))
