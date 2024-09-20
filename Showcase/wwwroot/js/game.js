@@ -1,4 +1,5 @@
-﻿var gameModule = (function () {
+﻿import { GameNotifications } from './gameNotifications.js';
+var gameModule = (function () {
     let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
     let gameBoard = [];
     let gameFinished;
@@ -9,9 +10,7 @@
     });
 
     connection.on("playerDisconnected", function (playerId) {
-        console.log(`Player ${playerId} has disconnected.`);
-        document.getElementById("notifications").textContent = `Speler: ${playerId} heeft het spel verlaten :( )`;
-        document.getElementById("notifications").style.display = "block";
+        GameNotifications.showPlayerDisconnected(playerId);
         document.getElementById("backToLobbyButton").style.display = "block";
 
         connection.invoke("ResetGame").catch(function (err) {
@@ -69,9 +68,8 @@
     });
 
     connection.on("gameOverMessage", function (message) {
-        console.log(message);
         document.getElementById("backToLobbyButton").style.display = "block";
-        displayGameMessage(message);
+        GameNotifications.displayGameMessage(message);
     });
 
     connection.on("updateCell", function (row, col, symbol) {
@@ -168,14 +166,8 @@
         }
     }
 
-    function displayGameMessage(message) {
-        var gameMessageElement = document.getElementById("notifications");
-        gameMessageElement.textContent = message;
-        gameMessageElement.style.display = "block";
-    }
-
     document.getElementById("backToLobbyButton").addEventListener("click", function () {
-        document.getElementById("notifications").style.display = "none";
+        GameNotifications.hideNotifications();
         document.getElementById("gameBoard").style.display = "none";
         document.getElementById("createGameButton").style.display = "block";
         document.getElementById("gameList").style.display = "block";
