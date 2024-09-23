@@ -1,9 +1,8 @@
-﻿import { GameNotifications } from './game-notifications.js';
-var gameModule = (function () {
-    let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+﻿import { GameNotifications } from './components/game-notifications.js';
+const gameModule = (function () {
+    const connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
     let gameBoard = [];
     let gameFinished;
-
 
     connection.start().catch(function (err) {
         return console.error(err.toString());

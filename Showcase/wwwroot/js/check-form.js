@@ -28,7 +28,7 @@
             }
         },
         messages: {
-            FirstName: "Voer uw voornaam in",
+            FirstName: "V   oer uw voornaam in",
             LastName: "Voer uw achternaam in",
             Subject: "Voer het onderwerp in",
             FromEmail: {
