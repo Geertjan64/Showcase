@@ -46,6 +46,14 @@ using (var scope = app.Services.CreateScope())
     await SeedData.Initialize(services);
 }
 
+using (var scope = app.Services.CreateScope()) 
+{ 
+    var dbContext = scope.ServiceProvider.GetRequiredService<ShowcaseContext>(); 
+    var gameDbContext = scope.ServiceProvider.GetRequiredService<GameDbContext>();
+    gameDbContext.Database.Migrate();
+    dbContext.Database.Migrate(); 
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

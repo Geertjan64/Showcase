@@ -19,5 +19,6 @@ RUN dotnet publish "Showcase.csproj" -c Release -o /app/publish /p:UseAppHost=fa
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY ./Showcase/*.db .
 ENTRYPOINT ["dotnet", "Showcase.dll"]
 
