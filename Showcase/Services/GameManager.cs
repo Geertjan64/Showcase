@@ -13,7 +13,7 @@ namespace Showcase.Services
 
         public GameManager() { }
 
-        public Player GetPlayer(string playerId)
+        public virtual Player GetPlayer(string playerId)
         {
             if (Game.Player1.Id == playerId)
             {

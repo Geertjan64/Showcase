@@ -2,9 +2,11 @@
     $("#contactForm").validate({
         rules: {
             FirstName: {
+                maxlength: 50,
                 required: true
             },
             LastName: {
+                maxlength: 50,
                 required: true
             },
             Subject: {
@@ -28,7 +30,7 @@
             }
         },
         messages: {
-            FirstName: "V   oer uw voornaam in",
+            FirstName: "Voer uw voornaam in",
             LastName: "Voer uw achternaam in",
             Subject: "Voer het onderwerp in",
             FromEmail: {

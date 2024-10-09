@@ -36,7 +36,7 @@
             <div class="container">
                 <h2>Contactformulier @contactName</h2>
                 <form id="contactForm" asp-action="SendMail" asp-controller="Mail" method="post">
-
+                    @Html.AntiForgeryToken()
                     <div class="form-group">
                         <label asp-for="FirstName">Voornaam:</label>
                         <input asp-for="FirstName" class="form-control" />
