@@ -1,6 +1,7 @@
 describe('Profile test', () => {
     beforeEach(() => {
         cy.visit('http://localhost:8080/');
+        cy.get('button[data-cookie-string]').click();
     });
 
     it('Check if CSS and JS files are loaded', () => {

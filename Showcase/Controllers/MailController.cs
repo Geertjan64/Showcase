@@ -35,7 +35,7 @@ namespace Showcase.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("E-mail is niet verzonden");
+                return BadRequest($"E-mail is niet verzonden. Fout: {ex.Message}");
             }
 
         }

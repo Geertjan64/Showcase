@@ -14,7 +14,7 @@
     });
 
     it('Should create a new game and check if gameboard', () => {
-        cy.visit('https://localhost:32772/api/game');
+        cy.visit('http://localhost:8080/api/game');
 
         cy.get('#createGameButton').click();
 

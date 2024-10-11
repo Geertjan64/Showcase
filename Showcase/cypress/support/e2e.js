@@ -18,3 +18,14 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // Controleer op de specifieke error message van Google reCAPTCHA
+    if (err.message.includes('Invalid site key or not loaded in api.js')) {
+        // Cypress negeert deze fout en laat de test doorgaan
+        return false;
+    }
+
+    // Laat andere fouten wel door
+    return true;
+});
