@@ -31,7 +31,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<GameManager>();
 builder.Services.AddRazorPages();
 
-services.Configure<CookiePolicyOptions>(options =>
+builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => true;
     options.MinimumSameSitePolicy = SameSiteMode.Lax; // Minder streng in lokale omgeving
