@@ -1,7 +1,7 @@
 ﻿describe('Login', () => {
     before(() => {
         cy.session('admin', () => {
-            cy.visit('https://localhost:32772/Identity/Account/Login');
+            cy.visit('http://localhost:8080/Identity/Account/Login');
 
             cy.get('button[data-cookie-string]').click();
             cy.get('input[name="Input.Email"]').type('admin@admin.nl');

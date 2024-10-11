@@ -1,6 +1,6 @@
 describe('Profile test', () => {
     beforeEach(() => {
-        cy.visit('https://localhost:32772/');
+        cy.visit('http://localhost:8080/');
     });
 
     it('Check if CSS and JS files are loaded', () => {

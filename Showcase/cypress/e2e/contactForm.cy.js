@@ -1,6 +1,6 @@
 ﻿describe('Contactform test', () => {
     beforeEach(() => {
-        cy.visit('https://localhost:32772/');
+        cy.visit('http://localhost:8080/Contact/ContactForm');
     });
 
     it('Should fill out and submit the contact form', () => {
