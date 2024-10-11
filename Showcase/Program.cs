@@ -31,12 +31,11 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<GameManager>();
 builder.Services.AddRazorPages();
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
+services.Configure<CookiePolicyOptions>(options =>
 {
-    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
     options.CheckConsentNeeded = context => true;
-    options.Secure = CookieSecurePolicy.None;
-    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.MinimumSameSitePolicy = SameSiteMode.Lax; // Minder streng in lokale omgeving
+    options.Secure = CookieSecurePolicy.None; // Zorgt ervoor dat de cookies ook werken zonder HTTPS
 });
 
 builder.Services.Configure<IdentityOptions>(options =>
