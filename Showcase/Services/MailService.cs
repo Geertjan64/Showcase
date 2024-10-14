@@ -22,7 +22,6 @@ namespace Showcase.Services
             email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
             email.Subject = mailRequest.Subject;
 
-            // Stel de body van de e-mail in met alle gegevens
             var emailBody = $"Naam: {mailRequest.FirstName} {mailRequest.LastName}\n" +
                             $"E-mail: {mailRequest.FromEmail}\n" +
                             $"Telefoonnummer: {mailRequest.Mobile}\n\n" +

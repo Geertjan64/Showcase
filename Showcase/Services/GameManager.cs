@@ -15,6 +15,7 @@ namespace Showcase.Services
 
         public virtual Player GetPlayer(string playerId)
         {
+            if (Game == null) return null;
             if (Game.Player1.Id == playerId)
             {
                 return Game.Player1;

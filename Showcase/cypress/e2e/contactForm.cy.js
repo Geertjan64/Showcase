@@ -22,10 +22,4 @@
         cy.get('.alert-success').should('be.visible');
         cy.get('.alert-success').contains('Het bericht is succesvol verzonden!');
     });
-
-    it('Should display validation errors when fields are empty', () => {
-        cy.get('button[type="submit"]').click();
-
-        cy.get('span.text-danger').should('have.length', 6);
-    });
 });

@@ -71,6 +71,18 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Content-Security-Policy",
+                                "default-src 'self';" +
+                                "script-src-elem 'self' 'unsafe-inline' https://code.jquery.com https://ajax.aspnetcdn.com https://www.google.com https://www.gstatic.com;" +
+                                "style-src 'self' 'unsafe-inline';" +
+                                "img-src 'self' data:;" +
+                                "frame-src 'self' https://www.google.com;" +
+                                "font-src 'self';");
+    await next();
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
