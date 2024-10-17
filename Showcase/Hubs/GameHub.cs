@@ -178,5 +178,10 @@ namespace Showcase.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        public async Task<string> GetPlayerByClick()
+        {
+            return _gameManager.GetPlayerTurn();
+        }
+
     }
 }

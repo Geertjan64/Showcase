@@ -72,6 +72,18 @@ namespace Showcase.Models
             return true;
         }
 
+        public string ReturnPlayerTurn()
+        {
+            if (Turn == Turn.Player1)
+            {
+                return Player1.Id;
+            }
+            else
+            {
+                return Player2.Id;
+            }
+        }
+
         public void SwitchPlayer()
         {
             if (Turn == Turn.Player1)

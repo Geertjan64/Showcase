@@ -3,6 +3,25 @@ const gameModule = (function () {
     const connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
     let gameBoard = [];
     let gameFinished;
+    let playerId;
+
+    async function getCurrentUser() {
+        const response = await fetch('/api/checkuser/current', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            playerId = result.userId;
+            console.log("Ingelogd als speler met ID:", playerId);
+        } else {
+            console.error("Fout bij het ophalen van de gebruiker:", response.statusText);
+        }
+    }
 
     connection.start().catch(function (err) {
         return console.error(err.toString());
@@ -158,9 +177,18 @@ const gameModule = (function () {
         if (gameBoard[row][col] == '' && !gameFinished) {
             console.log("Cell clicked:", cell.dataset.row, cell.dataset.col);
 
-            connection.invoke("MakeMove", row, col).catch(function (err) {
-                return console.error(err.toString());
-            });
+            try {
+                getCurrentUser();
+                const player = connection.invoke("GetPlayerByClick");
+                console.log("PlayerIdfromapi:", playerId, "Playerfromfunction:", player)
+                if (player == playerId) {
+                    connection.invoke("MakeMove", row, col).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                }
+            } catch (error) {
+                alert(error.message);
+            }
         }
     }
 
