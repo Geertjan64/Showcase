@@ -12,6 +12,7 @@ var connectionString = builder.Configuration.GetConnectionString("ShowcaseContex
 var connectionStringGame = builder.Configuration.GetConnectionString("GameDatabase") ?? throw new InvalidOperationException("Connection string 'ShowcaseContextConnection' not found.");
 
 
+
 builder.Services.AddDbContext<ShowcaseContext>(options =>
     options.UseSqlite(connectionString));
 
@@ -37,6 +38,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.Lax; // Minder streng in lokale omgeving
     options.Secure = CookieSecurePolicy.None; // Zorgt ervoor dat de cookies ook werken zonder HTTPS
 });
+
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -70,6 +73,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 
 app.Use(async (context, next) =>
 {

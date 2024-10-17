@@ -9,17 +9,6 @@
     <link rel="stylesheet" href="~/Showcase.styles.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $.getJSON('@Url.Action("CheckIfAdmin", "User")', function (data) {
-                if (data.isAdmin) {
-                    $('#admin-nav').show();
-                } else {
-                    $('#admin-nav').hide();
-                }
-            });
-        });
-    </script>
 </head>
 <partial name="_CookieConsentPartial" />
 <body>
