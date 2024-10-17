@@ -170,7 +170,7 @@ const gameModule = (function () {
         }
     }
 
-    function onCellClick(cell) {
+    async function onCellClick(cell) {
         var row = parseInt(cell.dataset.row);
         var col = parseInt(cell.dataset.col);
 
@@ -179,9 +179,14 @@ const gameModule = (function () {
 
             try {
                 getCurrentUser();
-                const player = connection.invoke("GetPlayerByClick");
+                const player = await connection.invoke("GetPlayerByClick");
+               
                 console.log("PlayerIdfromapi:", playerId, "Playerfromfunction:", player)
                 if (player == playerId) {
+
+
+                    console.log(player);
+                    console.log(playerId);
                     connection.invoke("MakeMove", row, col).catch(function (err) {
                         return console.error(err.toString());
                     });
