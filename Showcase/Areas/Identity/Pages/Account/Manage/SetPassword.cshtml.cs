@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Showcase.Areas.Identity.Data;
 
 namespace Showcase.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ShowcaseUser> _userManager;
+        private readonly SignInManager<ShowcaseUser> _signInManager;
 
         public SetPasswordModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<ShowcaseUser> userManager,
+            SignInManager<ShowcaseUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

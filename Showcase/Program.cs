@@ -49,6 +49,20 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequiredLength = 14;
     options.Password.RequiredUniqueChars = 1;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+    options.Lockout.MaxFailedAccessAttempts = 3;
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "__Host-SecureCookie";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.Path = "/";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
 });
 
 var app = builder.Build();
@@ -88,7 +102,12 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = false,
+    DefaultContentType = "application/octet-stream"
+});
 
 app.UseCookiePolicy();
 

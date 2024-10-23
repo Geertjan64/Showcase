@@ -103,7 +103,7 @@ namespace Showcase.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "Het {0} moet minstens {2} en maximaal {1} karakters lang zijn.", MinimumLength = 8)]
+            [StringLength(128, ErrorMessage = "Het {0} moet minstens {2} en maximaal {1} karakters lang zijn.", MinimumLength = 14)]
             [DataType(DataType.Password)]
             [Display(Name = "Wachtwoord")]
             public string Password { get; set; }
