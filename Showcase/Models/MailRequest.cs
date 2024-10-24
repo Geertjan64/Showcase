@@ -1,27 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Showcase.Models
+public class MailRequest
 {
-    public class MailRequest
-    {
-        public string ToEmail = "mailservertestdev@gmail.com";
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
-        public string Subject { get; private set; }
-        public string FromEmail { get; private set; }
-        public string Mobile { get; private set; }
-        public string Body { get; private set; }
+    [Required(ErrorMessage = "Voornaam is verplicht.")]
+    [MaxLength(50, ErrorMessage = "Voornaam mag maximaal 50 tekens zijn.")]
+    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Voornaam mag alleen letters bevatten.")]
+    public string FirstName { get; set; }
 
-        public MailRequest(string firstName, string lastName, string subject, string fromEmail, string mobile, string body)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            Subject = subject;
-            FromEmail = fromEmail;
-            Mobile = mobile;
-            Body = body;
-        }
+    [Required(ErrorMessage = "Achternaam is verplicht.")]
+    [MaxLength(50, ErrorMessage = "Achternaam mag maximaal 50 tekens zijn.")]
+    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Achternaam mag alleen letters bevatten.")]
+    public string LastName { get; set; }
 
-        private MailRequest() { }
-    }
+    [Required(ErrorMessage = "Onderwerp is verplicht.")]
+    [MaxLength(200, ErrorMessage = "Onderwerp mag maximaal 200 tekens zijn.")]
+    public string Subject { get; set; }
+
+    [Required(ErrorMessage = "E-mailadres is verplicht.")]
+    [EmailAddress(ErrorMessage = "Voer een geldig e-mailadres in.")]
+    public string FromEmail { get; set; }
+
+    [Required(ErrorMessage = "Mobiele nummer is verplicht.")]
+    [RegularExpression(@"^\d{10,20}$", ErrorMessage = "Mobiele nummer moet tussen de 10 en 20 cijfers bevatten.")]
+    public string Mobile { get; set; }
+
+    [Required(ErrorMessage = "Bericht is verplicht.")]
+    [MaxLength(600, ErrorMessage = "Bericht mag maximaal 600 tekens zijn.")]
+    public string Body { get; set; }
+    public string ToEmail = "mailservertestdev@gmail.com";
 }
+

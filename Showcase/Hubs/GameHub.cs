@@ -46,6 +46,11 @@ namespace Showcase.Hubs
 
         public async Task MakeMove(int row, int col)
         {
+            if (row < 0 || row > 2 || col < 0 || col > 2)
+            {
+                return;
+            }
+
             var user = await _userManager.GetUserAsync(Context.User);
             var player = _gameManager.GetPlayer(user.Id);
             var opponent = _gameManager.ReturnOpponent(player.Id);

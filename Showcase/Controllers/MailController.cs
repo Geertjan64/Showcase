@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Showcase.Models;
 using Showcase.Services;
+using Ganss.Xss;
 
 namespace Showcase.Controllers
 {
@@ -14,6 +15,7 @@ namespace Showcase.Controllers
         {
             this.mailService = mailService;
         }
+
         [HttpPost("send")]
         public async Task<IActionResult> SendMail([FromForm] MailRequest request)
         {
@@ -27,7 +29,12 @@ namespace Showcase.Controllers
             {
                 return BadRequest("Bericht mag maximaal 600 tekens zijn.");
             }
-            
+
+            // Sanitize de Body en Subject
+            var sanitizer = new HtmlSanitizer();
+            request.Body = sanitizer.Sanitize(request.Body);
+            request.Subject = sanitizer.Sanitize(request.Subject);
+
             try
             {
                 await mailService.SendEmailAsync(request);
@@ -37,7 +44,6 @@ namespace Showcase.Controllers
             {
                 return BadRequest($"E-mail is niet verzonden. Fout: {ex.Message}");
             }
-
         }
     }
 }

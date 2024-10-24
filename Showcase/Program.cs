@@ -111,6 +111,15 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseCookiePolicy();
 
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    context.Response.Headers.Add("Pragma", "no-cache");
+    context.Response.Headers.Add("Expires", "0");
+
+    await next();
+});
+
 app.UseRouting();
 app.UseAuthentication();;
 
