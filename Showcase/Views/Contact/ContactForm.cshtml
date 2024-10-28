@@ -40,45 +40,47 @@
                     <div class="form-group">
                         <label asp-for="FirstName">Voornaam:</label>
                         <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <span asp-validation-for="FirstName" class="text-danger" id="FirstNameError"></span>
                     </div>
 
                     <div class="form-group">
                         <label asp-for="LastName">Achternaam:</label>
                         <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
+                        <span asp-validation-for="LastName" class="text-danger" id="LastNameError"></span>
                     </div>
 
                     <div class="form-group">
                         <label asp-for="Subject">Onderwerp:</label>
                         <input asp-for="Subject" class="form-control" />
-                        <span asp-validation-for="Subject" class="text-danger"></span>
+                        <span asp-validation-for="Subject" class="text-danger" id="SubjectError"></span>
                     </div>
 
                     <div class="form-group">
                         <label asp-for="FromEmail">E-mail:</label>
                         <input asp-for="FromEmail" class="form-control" />
-                        <span asp-validation-for="FromEmail" class="text-danger"></span>
+                        <span asp-validation-for="FromEmail" class="text-danger" id="FromEmailError"></span>
                     </div>
 
                     <div class="form-group">
                         <label asp-for="Mobile">Mobiel:</label>
                         <input asp-for="Mobile" class="form-control" />
-                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                        <span asp-validation-for="Mobile" class="text-danger" id="MobileError"></span>
                     </div>
 
                     <div class="form-group">
                         <label asp-for="Body">Bericht:</label>
                         <textarea asp-for="Body" class="form-control"></textarea>
-                        <span asp-validation-for="Body" class="text-danger"></span>
+                        <span asp-validation-for="Body" class="text-danger" id="BodyError"></span>
                     </div>
+
                     <button class="btn btn-primary" type="submit">Verzenden</button>
                 </form>
+
             </div>
         </section>
     </div>
 
-    <script type="text/javascript" src="/js/check-form.js"></script>
+    <script type="text/javascript" src="~/js/check-form.js"></script>
     <script type="text/javascript" src="~/js/site.js"></script>
     <script type="text/javascript" src="~/js/recaptcha.js"></script>
     <script type="text/javascript" src="~/js/send-form.js"></script>
