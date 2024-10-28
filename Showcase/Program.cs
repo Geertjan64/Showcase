@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Showcase.Data;
 using Showcase.Areas.Identity.Data;
 using System.Configuration;
+using Showcase.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ShowcaseContextConnection") ?? throw new InvalidOperationException("Connection string 'ShowcaseContextConnection' not found.");
@@ -88,12 +89,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+    app.UseDeveloperExceptionPage();
+}
+
+
 
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("Content-Security-Policy",
                                 "default-src 'self';" +
-                                "script-src-elem 'self' 'unsafe-inline' https://code.jquery.com https://ajax.aspnetcdn.com https://www.google.com https://www.gstatic.com;" +
+                                "script-src-elem 'self' 'unsafe-inline' https://code.jquery.com https://ajax.aspnetcdn.com https://www.google.com https://www.gstatic.com https://cdnjs.cloudflare.com;" +
                                 "style-src 'self' 'unsafe-inline';" +
                                 "img-src 'self' data:;" +
                                 "frame-src 'self' https://www.google.com;" +
@@ -116,9 +124,33 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
     context.Response.Headers.Add("Pragma", "no-cache");
     context.Response.Headers.Add("Expires", "0");
+    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Add("X-Frame-Options", "DENY");
+    context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubDomains");
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+
+    if (!context.Response.Headers.ContainsKey("Content-Type"))
+    {
+        context.Response.Headers.Add("Content-Type", "text/html; charset=UTF-8");
+    }
+    else
+    {
+        var contentType = context.Response.ContentType;
+        if (contentType.StartsWith("text/") || contentType.Contains("xml"))
+        {
+            if (!contentType.Contains("charset"))
+            {
+                context.Response.ContentType = $"{contentType}; charset=UTF-8";
+            }
+        }
+    }
 
     await next();
 });
+
+
+app.UseMiddleware<ContentTypeMiddleware>();
 
 app.UseRouting();
 app.UseAuthentication();;
