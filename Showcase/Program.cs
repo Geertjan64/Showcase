@@ -130,22 +130,6 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubDomains");
     context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
 
-    if (!context.Response.Headers.ContainsKey("Content-Type"))
-    {
-        context.Response.Headers.Add("Content-Type", "text/html; charset=UTF-8");
-    }
-    else
-    {
-        var contentType = context.Response.ContentType;
-        if (contentType.StartsWith("text/") || contentType.Contains("xml"))
-        {
-            if (!contentType.Contains("charset"))
-            {
-                context.Response.ContentType = $"{contentType}; charset=UTF-8";
-            }
-        }
-    }
-
     await next();
 });
 
