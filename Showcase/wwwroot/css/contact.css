@@ -18,11 +18,10 @@ textarea {
     border-radius: 3px;
 }
 
-/* Error styling */
 .is-invalid {
-    border: 1px solid #dc3545; /* Rode rand voor ongeldige elementen */
+    border-color: red;
 }
 
 .is-valid {
-    border: 1px solid #28a745; /* Groene rand voor geldige elementen */
+    border-color: green;
 }
