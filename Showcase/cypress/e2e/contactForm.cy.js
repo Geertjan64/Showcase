@@ -15,11 +15,13 @@
         cy.get('input[name="Mobile"]').type('0645289517');
         cy.get('textarea[name="Body"]').type('Hallo, ik wil graag contact met u! Kunt u mij bellen? :).');
 
+        // Maak een spy op de window.alert functie
+        cy.window().then((win) => {
+            cy.stub(win, 'alert').as('alertStub');
+        });
+
         cy.get('button[type="submit"]').click();
 
-        cy.wait(10000);
-
-        cy.get('.alert-success').should('be.visible');
-        cy.get('.alert-success').contains('Het bericht is succesvol verzonden!');
+        cy.get('@alertStub').should('have.been.calledWith', 'E-mail is verzonden');
     });
 });

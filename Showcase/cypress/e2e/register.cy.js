@@ -17,4 +17,5 @@
 
         cy.get('#confirm-link').click();
         cy.url().should('include', '/ConfirmEmail');
+    });
 });
