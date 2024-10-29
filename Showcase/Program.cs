@@ -55,17 +55,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.MaxFailedAccessAttempts = 3;
 });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    //options.Cookie.Name = "__Host-SecureCookie";
-    //options.Cookie.HttpOnly = true;
-    //options.Cookie.Path = "/";
-    //options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    //options.LoginPath = "/Identity/Account/Login";
-    //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-    //options.SlidingExpiration = true;
-});
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -91,7 +80,7 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment())
 {
-    //app.UseHsts();
+    app.UseHsts();
     app.UseDeveloperExceptionPage();
 }
 
