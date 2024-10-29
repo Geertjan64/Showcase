@@ -121,14 +121,14 @@ app.UseCookiePolicy();
 
 app.Use(async (context, next) =>
 {
-    //context.Response.Headers.Add("Cache-Control", "no-store, no-cache, must-revalidate");
-    //context.Response.Headers.Add("Pragma", "no-cache");
-    //context.Response.Headers.Add("Expires", "0");
-    //context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    //context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-    //context.Response.Headers.Add("X-Frame-Options", "DENY");
-    //context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubDomains");
-    //context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Add("Cache-Control", "no-store, no-cache, must-revalidate");
+    context.Response.Headers.Add("Pragma", "no-cache");
+    context.Response.Headers.Add("Expires", "0");
+    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Add("X-Frame-Options", "DENY");
+    context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubDomains");
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
 
     await next();
 });
