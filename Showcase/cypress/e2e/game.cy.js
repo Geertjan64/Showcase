@@ -5,7 +5,7 @@
 
             cy.get('button[data-cookie-string]').click();
             cy.get('input[name="Input.Email"]').type('admin@admin.nl');
-            cy.get('input[name="Input.Password"]').type('Admin123!');
+            cy.get('input[name="Input.Password"]').type('Admin123!Admin123!');
 
             cy.get('#login-submit').click();
 
